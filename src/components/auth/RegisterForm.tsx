@@ -45,7 +45,7 @@ export default function RegisterForm() {
         return;
       }
       // TODO: Redirect to the login page
-    } catch (error: any) {
+    } catch (error: any) { // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden");
     }
   };

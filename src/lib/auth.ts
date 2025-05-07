@@ -13,7 +13,7 @@ export async function signUp(
 ): Promise<UserCredential | null> {
   try {
     return await createUserWithEmailAndPassword(auth, email, password);
-  } catch (error: any) {
+  } catch (error: any) { // eslint-disable-line
     console.error("Firebase foutmelding, details in console:", error.code);
     return null;
   }
