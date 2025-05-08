@@ -14,3 +14,11 @@ export const registerSchema = z.object({
   message: "Wachtwoorden zijn niet hetzelfde",
   path: ["passwordConfirm"],
 });
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .email({ message: "Ongeldig e-mailadres" }),
+  password: z
+    .string(),
+});
