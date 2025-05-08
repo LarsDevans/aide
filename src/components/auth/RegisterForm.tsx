@@ -14,6 +14,7 @@ export default function RegisterForm() {
     passwordConfirm: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +25,7 @@ export default function RegisterForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     if (!validateSchema()) return;
 
@@ -46,6 +48,7 @@ export default function RegisterForm() {
         setError("Firebase foutmelding (zie console)");
         return;
       }
+      setSuccess("Account aangemaakt. Even geduld...");
       router.push('/auth/login');
     } catch (error: any) { // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden");
@@ -82,6 +85,7 @@ export default function RegisterForm() {
         <Button label="Account registreren" type="submit" />
 
         {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
       </form>
 
     </div>
