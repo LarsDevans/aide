@@ -13,6 +13,7 @@ export default function LoginForm() {
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,10 +24,13 @@ export default function LoginForm() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setIsLoading(true);
 
-    if (!validateSchema()) return;
+    if (validateSchema()) {
+      await loginUser();
+    }
 
-    await loginUser();
+    setIsLoading(false);
   };
 
   const validateSchema = (): boolean => {
@@ -72,7 +76,7 @@ export default function LoginForm() {
           value={formData.password}
           onChange={handleInputChange}
         />
-        <Button label="Inloggen" type="submit" />
+        <Button disabled={isLoading} label="Inloggen" type="submit" />
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}

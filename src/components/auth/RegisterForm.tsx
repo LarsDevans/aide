@@ -15,6 +15,7 @@ export default function RegisterForm() {
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,10 +27,13 @@ export default function RegisterForm() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setIsLoading(true);
 
-    if (!validateSchema()) return;
+    if (validateSchema()) {
+      await registerUser();
+    }
 
-    await registerUser();
+    setIsLoading(false);
   };
 
   const validateSchema = (): boolean => {
@@ -82,7 +86,7 @@ export default function RegisterForm() {
           value={formData.passwordConfirm}
           onChange={handleInputChange}
         />
-        <Button label="Account registreren" type="submit" />
+        <Button disabled={isLoading} label="Account registreren" type="submit" />
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
