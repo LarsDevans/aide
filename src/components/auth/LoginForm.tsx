@@ -2,19 +2,17 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { signUp } from "@/lib/auth";
-import { registerSchema } from "@/lib/validation/auth";
-import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/auth";
+import { loginSchema } from "@/lib/validation/auth";
 import { ChangeEvent, FormEvent, useState } from "react";
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    passwordConfirm: "",
   });
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,14 +22,15 @@ export default function RegisterForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     if (!validateSchema()) return;
 
-    await registerUser();
+    await loginUser();
   };
 
   const validateSchema = (): boolean => {
-    const result = registerSchema.safeParse(formData);
+    const result = loginSchema.safeParse(formData);
     if (result.error) {
       setError(result.error.errors[0].message);
       return false;
@@ -39,14 +38,15 @@ export default function RegisterForm() {
     return true;
   };
 
-  const registerUser = async () => {
+  const loginUser = async () => {
     try {
-      const result = await signUp(formData.email, formData.password);
+      const result = await signIn(formData.email, formData.password);
       if (result === null) {
         setError("Firebase foutmelding (zie console)");
         return;
       }
-      router.push('/auth/login');
+      setSuccess("Succesvol ingelogd. Even geduld...");
+      // TODO: Redirect to the home page
     } catch (error: any) { // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden");
     }
@@ -55,7 +55,7 @@ export default function RegisterForm() {
   return (
     <div className="text-center">
 
-      <h1>Registreer een Aide account</h1>
+      <h1>Login met jouw Aide account</h1>
 
       <form className="flex flex-col" onSubmit={handleSubmit}>
         <Input
@@ -72,16 +72,10 @@ export default function RegisterForm() {
           value={formData.password}
           onChange={handleInputChange}
         />
-        <Input
-          name="passwordConfirm"
-          placeholder="Herhaal wachtwoord"
-          type="password"
-          value={formData.passwordConfirm}
-          onChange={handleInputChange}
-        />
-        <Button label="Account registreren" type="submit" />
+        <Button label="Inloggen" type="submit" />
 
         {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
       </form>
 
     </div>
