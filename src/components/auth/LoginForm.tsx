@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { signIn } from "@/lib/auth";
 import { loginSchema } from "@/lib/validation/auth";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function LoginForm() {
@@ -14,6 +15,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,7 +52,7 @@ export default function LoginForm() {
         return;
       }
       setSuccess("Succesvol ingelogd. Even geduld...");
-      // TODO: Redirect to the home page
+      router.push('/silo');
     } catch (error: any) { // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden");
     }
