@@ -27,7 +27,7 @@ export default function SiloIndex() {
         {silos.length > 0 ? (
           silos.map((silo) => (
             <li key={silo.uid} className="border">
-              <span className="font-bold">{silo.name}</span>
+              <p className="font-bold">{silo.name}</p>
               {silo.description && <p className="italic">{silo.description}</p>}
             </li>
           ))
