@@ -19,6 +19,10 @@ export function getAuthUser(): User | null {
   return authUser;
 }
 
+export function getAuthUserUid(): string | undefined {
+  return getAuthUser()?.uid;
+}
+
 export async function signUp(
   email: string,
   password: string

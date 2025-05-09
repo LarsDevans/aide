@@ -10,15 +10,13 @@ export async function getByUid(Uid: string): Promise<Silo> { // eslint-disable-l
   return { uid: "", name: "", description: "", ownerUid: "" };
 }
 
-export async function getAll(): Promise<Silo[]> {
+export async function getAllByOwnerUid(ownerUid: string): Promise<Silo[]> {
   try {
     const collectionRef = collection(db, documentName);
     const querySnap = await getDocs(collectionRef);
-
-    const silos: Silo[] = [];
-    querySnap.forEach((doc) => silos.push(doc.data() as Silo));
-
-    return silos;
+    return querySnap.docs
+      .map((doc) => doc.data() as Silo)
+      .filter((silo) => silo.ownerUid === ownerUid);
   } catch (error: any) { // eslint-disable-line
     console.error("Firebase foutmelding, details in console:", error.code);
     return [];

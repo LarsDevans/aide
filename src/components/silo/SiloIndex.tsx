@@ -2,7 +2,8 @@
 
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingState from "@/components/ui/LoadingState";
-import { getAll } from "@/lib/silo";
+import { getAuthUserUid } from "@/lib/auth";
+import { getAllByOwnerUid } from "@/lib/silo";
 import { Silo } from "@/types/silo";
 import { useEffect, useState } from "react";
 
@@ -12,7 +13,8 @@ export default function SiloIndex() {
 
   useEffect(() => {
     const fetchSilos = async () => {
-      const data = await getAll();
+      const authUserUid = getAuthUserUid() ?? "";
+      const data = await getAllByOwnerUid(authUserUid);
       setIsLoading(false);
       setSilos(data);
     }
