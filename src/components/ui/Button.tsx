@@ -1,4 +1,4 @@
-import { Button as ButtonType } from "@/types/button";
+import { Button as ButtonType } from "@/types/ui";
 
 export default function Button({
   disabled,

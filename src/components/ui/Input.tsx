@@ -1,4 +1,4 @@
-import { Input as InputType } from "@/types/input";
+import { Input as InputType } from "@/types/ui";
 
 export default function Input({
   name,
