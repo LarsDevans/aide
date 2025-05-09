@@ -6,7 +6,7 @@ import { uid } from "uid";
 
 const documentName = "silos";
 
-export async function getByUid(Uid: string): Promise<Silo> {
+export async function getByUid(Uid: string): Promise<Silo> { // eslint-disable-line
   return { uid: "", name: "", description: "", ownerUid: "" };
 }
 
@@ -25,6 +25,6 @@ export async function create(silo: Silo): Promise<Silo | null> {
   }
 }
 
-export async function update(silo: Silo): Promise<Silo> {
+export async function update(silo: Silo): Promise<Silo> { // eslint-disable-line
   return { uid: "", name: "", description: "", ownerUid: "" };
 }
