@@ -46,8 +46,10 @@ export default function SiloCreateForm() {
 
   const createSilo = async () => {
     try {
-      const silo = { name: formData.name, description: formData.description };
-      const result = await create(silo);
+      const result = await create({
+          name: formData.name,
+          description: formData.description 
+      });
       if (result === null) {
         setError("Firebase foutmelding (zie console)");
         return;
