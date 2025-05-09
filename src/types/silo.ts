@@ -1,6 +1,6 @@
-export interface Silo {
-  uid: string;
+export type Silo = {
+  uid?: string;
   name: string;
   description: string;
-  ownerUid: string;
+  ownerUid?: string;
 }
