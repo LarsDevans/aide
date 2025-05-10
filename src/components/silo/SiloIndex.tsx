@@ -1,5 +1,6 @@
 "use client";
 
+import SiloCreateCta from "@/components/silo/SiloCreateCta";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingState from "@/components/ui/LoadingState";
 import { getAuthUserUid } from "@/lib/auth";
@@ -34,7 +35,7 @@ export default function SiloIndex() {
             </li>
           ))
         ) : (
-          !isLoading && <EmptyState />
+          !isLoading && <EmptyState cta={<SiloCreateCta />} />
         )}
       </ul>
       {isLoading && <LoadingState />}
