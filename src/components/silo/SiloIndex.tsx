@@ -6,6 +6,7 @@ import LoadingState from "@/components/ui/LoadingState";
 import { getAuthUserUid } from "@/lib/auth";
 import { getAllByOwnerUid } from "@/lib/silo";
 import { Silo } from "@/types/silo";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function SiloIndex() {
@@ -26,6 +27,7 @@ export default function SiloIndex() {
   return (
     <div className="flex flex-col w-96">
       <h1 className="text-center font-bold text-lg">Jouw silos</h1>
+      {isLoading && <LoadingState />}
       <ul>
         {silos.length > 0 ? (
           silos.map((silo) => (
@@ -38,7 +40,10 @@ export default function SiloIndex() {
           !isLoading && <EmptyState cta={<SiloCreateCta />} />
         )}
       </ul>
-      {isLoading && <LoadingState />}
+
+      <Link className="underline" href="/silo/create">
+        Nieuwe silo aanmaken
+      </Link>
     </div>
   );
 }
