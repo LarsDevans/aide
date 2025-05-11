@@ -30,7 +30,7 @@ export async function signIn(
     .then(async () => {
       return await signInWithEmailAndPassword(auth, email, password);
     })
-    .catch((error: any) => {
+    .catch((error: any) => { // eslint-disable-line
       console.error("Firebase foutmelding, details in console:", error.code);
       return null;
     });
