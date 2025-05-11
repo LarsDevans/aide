@@ -2,6 +2,7 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import useAuth from "@/hooks/useAuth";
 import { create } from "@/lib/silo";
 import { createSchema } from "@/lib/validation/silo";
 import { useRouter } from "next/navigation";
@@ -14,7 +15,8 @@ export default function SiloCreateForm() {
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentUser } = useAuth();
   const router = useRouter();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,13 +28,13 @@ export default function SiloCreateForm() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     if (validateSchema()) {
       await createSilo();
     }
 
-    setIsLoading(false);
+    setIsSubmitting(false);
   };
 
   const validateSchema = (): boolean => {
@@ -49,7 +51,7 @@ export default function SiloCreateForm() {
       const result = await create({
           name: formData.name,
           description: formData.description 
-      });
+      }, currentUser?.uid ?? "");
       if (result === null) {
         setError("Firebase foutmelding (zie console)");
         return;
@@ -81,7 +83,7 @@ export default function SiloCreateForm() {
           value={formData.description}
           onChange={handleInputChange}
         />
-        <Button disabled={isLoading} label="Silo aanmaken" type="submit" />
+        <Button disabled={isSubmitting} label="Silo aanmaken" type="submit" />
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}

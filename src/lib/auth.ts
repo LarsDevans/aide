@@ -3,27 +3,12 @@ import {
   browserSessionPersistence,
   createUserWithEmailAndPassword,
   getAuth,
-  onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
-  User,
   UserCredential
 } from "firebase/auth";
 
-const auth = getAuth(app);
-
-let authUser: User | null = null;
-onAuthStateChanged(auth, (user) => {
-  authUser = user;
-});
-
-export function getAuthUser(): User | null {
-  return authUser;
-}
-
-export function getAuthUserUid(): string | undefined {
-  return getAuthUser()?.uid;
-}
+export const auth = getAuth(app);
 
 export async function signUp(
   email: string,

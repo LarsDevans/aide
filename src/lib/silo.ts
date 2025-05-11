@@ -1,4 +1,3 @@
-import { getAuthUser } from "@/lib/auth";
 import { db } from "@/lib/firebase";
 import { Silo } from "@/types/silo";
 import { Unsubscribe } from "firebase/auth";
@@ -35,9 +34,9 @@ export function listenForByOwnerUid(
   return unsubscribe;
 }
 
-export async function create(silo: Silo): Promise<Silo | null> {
+export async function create(silo: Silo, ownerUid: string): Promise<Silo | null> {
   try {
-    silo = { ...silo, uid: uid(32), ownerUid: getAuthUser()?.uid };
+    silo = { ...silo, uid: uid(32), ownerUid: ownerUid};
     await setDoc(doc(db, documentName, String(silo.uid)), silo);
     return silo;
   } catch (error: any) { // eslint-disable-line
