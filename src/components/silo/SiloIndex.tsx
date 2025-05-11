@@ -4,7 +4,7 @@ import SiloCreateCta from "@/components/silo/SiloCreateCta";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingState from "@/components/ui/LoadingState";
 import { getAuthUserUid } from "@/lib/auth";
-import { getAllByOwnerUid } from "@/lib/silo";
+import { listenForByOwnerUid } from "@/lib/silo";
 import { Silo } from "@/types/silo";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -14,15 +14,14 @@ export default function SiloIndex() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSilos = async () => {
-      const authUserUid = getAuthUserUid() ?? "";
-      const data = await getAllByOwnerUid(authUserUid);
-      setIsLoading(false);
-      setSilos(data);
-    }
+    const authUserUid = getAuthUserUid() ?? "";
+    const unsubscribe = listenForByOwnerUid(authUserUid, (silos: Silo[]) => {
+      setSilos(silos);
+    });
+    setIsLoading(false);
 
-    fetchSilos();
-  });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="flex flex-col w-96">
