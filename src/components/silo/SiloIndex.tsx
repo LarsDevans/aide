@@ -15,9 +15,12 @@ export default function SiloIndex() {
 
   useEffect(() => {
     const authUserUid = getAuthUserUid() ?? "";
-    const unsubscribe = listenForByOwnerUid(authUserUid, (silos: Silo[]) => {
-      setSilos(silos);
-    });
+    const unsubscribe = listenForByOwnerUid(
+      authUserUid,
+      (silos: Silo[]) => {
+        setSilos(silos);
+      }
+    );
     setIsLoading(false);
 
     return () => unsubscribe();
