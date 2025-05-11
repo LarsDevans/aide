@@ -5,10 +5,19 @@ import {
   getAuth,
   setPersistence,
   signInWithEmailAndPassword,
+  User,
   UserCredential
 } from "firebase/auth";
 
 const auth = getAuth(app);
+
+export function getCurrentUser(): User | null {
+  return auth.currentUser;
+}
+
+export function getCurrentUserUid(): string | undefined {
+  return getCurrentUser()?.uid;
+}
 
 export async function signUp(
   email: string,
