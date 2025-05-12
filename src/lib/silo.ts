@@ -72,7 +72,7 @@ export async function update(
     const docRef = doc(db, documentName, uid);
     await updateDoc(docRef, nextSilo);
     return nextSilo;
-  } catch (error: any) {
+  } catch (error: any) { // eslint-disable-line
     console.error("Firebase foutmelding, details in console:", error.code);
     return null;
   }
