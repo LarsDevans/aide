@@ -33,9 +33,17 @@ export default function SiloIndex() {
       <ul>
         {silos && silos.length > 0 ? (
           silos.map((silo) => (
-            <li key={silo.uid} className="border">
-              <p className="font-bold">{silo.name}</p>
-              {silo.description && <p className="italic">{silo.description}</p>}
+            <li
+              key={silo.uid}
+              className="border p-2 flex justify-between items-center"
+            >
+              <div>
+                <p className="font-bold">{silo.name}</p>
+                {silo.description && <p className="italic">{silo.description}</p>}
+              </div>
+              <Link className="underline" href={`/silo/edit/${silo.uid}`}>
+                Wijzig
+              </Link>
             </li>
           ))
         ) : (
