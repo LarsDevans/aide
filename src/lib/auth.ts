@@ -9,7 +9,7 @@ import {
   UserCredential
 } from "firebase/auth";
 
-const auth = getAuth(app);
+export const auth = getAuth(app);
 
 export function getCurrentUser(): User | null {
   return auth.currentUser;
