@@ -5,6 +5,7 @@ import Input from "@/components/ui/Input";
 import useAuth from "@/hooks/useAuth";
 import { getByUid, update } from "@/lib/silo";
 import { updateSchema } from "@/lib/validation/silo";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
@@ -97,7 +98,10 @@ export default function SiloEditForm({ uid }: { uid: string }) {
           value={formData.description}
           onChange={handleInputChange}
         />
-        <Button disabled={isSubmitting} label="Silo aanpassen" type="submit" />
+        <div className="pt-2 flex justify-between items-center">
+          <Link className="underline" href="/silo">Annuleren</Link>
+          <Button disabled={isSubmitting} label="Silo aanpassen" type="submit" />
+        </div>
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
