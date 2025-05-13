@@ -1,15 +1,14 @@
 "use client"
 
-import SiloCreateCta from "@/components/silo/SiloCreateCta"
 import Button from "@/components/ui/Button"
 import EmptyState from "@/components/ui/EmptyState"
 import { useAuth } from "@/hooks/useAuth"
-import { archive, listenForByOwnerUid } from "@/lib/silo"
+import { listenForByOwnerUid, unarchive } from "@/lib/silo"
 import { Silo } from "@/types/silo"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
-export default function SiloIndex() {
+export default function SiloArchive() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
   const { currentUser } = useAuth()
 
@@ -17,21 +16,21 @@ export default function SiloIndex() {
     const unsubscribe = listenForByOwnerUid(
       currentUser?.uid ?? "",
       (silos: Silo[]) => {
-        const activeSilos = silos.filter((silo) => !silo.isArchived)
-        setSilos(activeSilos)
+        const archivedSilos = silos.filter((silo) => silo.isArchived)
+        setSilos(archivedSilos)
       }
     )
     return () => unsubscribe()
   }, [currentUser?.uid])
 
-  const archiveSilo = async (silo: Silo) => {
-    await archive(silo?.uid ?? "")
+  const unarchiveSilo = async (silo: Silo) => {
+    await unarchive(silo?.uid ?? "")
   }
 
   return (
     <div className="flex flex-col w-96">
 
-      <h1 className="text-center font-bold text-lg">Jouw silos</h1>
+      <h1 className="text-center font-bold text-lg">Jouw silo archief</h1>
 
       <ul>
         {silos && silos.length > 0 ? (
@@ -45,26 +44,18 @@ export default function SiloIndex() {
                 {silo.description && <p className="italic">{silo.description}</p>}
               </div>
               <div className="space-x-2">
-                <Link className="underline" href={`/silo/edit/${silo.uid}`}>
-                  Wijzig
-                </Link>
-                <Button label="Archiveren" onClick={() => archiveSilo(silo)} />
+                <Button label="Dearchiveren" onClick={() => unarchiveSilo(silo)} />
               </div>
             </li>
           ))
         ) : (
-          silos && <EmptyState cta={<SiloCreateCta />} />
+          silos && <EmptyState />
         )}
       </ul>
 
-      <div className="flex justify-between">
-        <Link className="underline" href="/silo/create">
-          Nieuwe silo aanmaken
-        </Link>
-        <Link className="underline" href="/silo/archive">
-          Naar archief
-        </Link>
-      </div>
+      <Link className="underline" href="/silo">
+        Terug naar overzicht
+      </Link>
 
     </div>
   )

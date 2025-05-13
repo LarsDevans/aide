@@ -1,9 +1,9 @@
-import { Button as ButtonType } from "@/types/ui";
+import { Button as ButtonType } from "@/types/ui"
 
 export default function Button({
-  disabled,
+  disabled = false,
   label,
-  type,
+  type = "button",
   onClick
 }: ButtonType) {
   return (
@@ -15,5 +15,5 @@ export default function Button({
     >
       {label}
     </button>
-  );
+  )
 }
