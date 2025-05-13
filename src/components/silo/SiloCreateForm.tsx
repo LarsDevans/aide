@@ -2,7 +2,7 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { create } from "@/lib/silo";
 import { createSchema } from "@/lib/validation/silo";
 import { useRouter } from "next/navigation";

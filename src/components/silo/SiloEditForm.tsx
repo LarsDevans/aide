@@ -2,7 +2,6 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import useAuth from "@/hooks/useAuth";
 import { getByUid, update } from "@/lib/silo";
 import { updateSchema } from "@/lib/validation/silo";
 import Link from "next/link";
@@ -17,7 +16,6 @@ export default function SiloEditForm({ uid }: { uid: string }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { currentUser, isLoading } = useAuth(); // eslint-disable-line
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +27,7 @@ export default function SiloEditForm({ uid }: { uid: string }) {
       });
     }
     fetchSilo();
-  }, []);
+  }, [uid]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
