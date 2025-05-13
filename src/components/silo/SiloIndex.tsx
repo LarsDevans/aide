@@ -2,8 +2,7 @@
 
 import SiloCreateCta from "@/components/silo/SiloCreateCta";
 import EmptyState from "@/components/ui/EmptyState";
-import LoadingState from "@/components/ui/LoadingState";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { listenForByOwnerUid } from "@/lib/silo";
 import { Silo } from "@/types/silo";
 import Link from "next/link";
@@ -11,25 +10,23 @@ import { useEffect, useState } from "react";
 
 export default function SiloIndex() {
   const [silos, setSilos] = useState<Silo[] | null>(null);
-  const { currentUser, isLoading } = useAuth();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    const authUserUid = currentUser?.uid ?? "";
     const unsubscribe = listenForByOwnerUid(
-      authUserUid,
+      currentUser?.uid ?? "",
       (silos: Silo[]) => {
         setSilos(silos);
       }
     );
     return () => unsubscribe();
-  }, [currentUser]);
+  }, [currentUser?.uid]);
 
   return (
     <div className="flex flex-col w-96">
 
       <h1 className="text-center font-bold text-lg">Jouw silos</h1>
 
-      {isLoading && <LoadingState />}
       <ul>
         {silos && silos.length > 0 ? (
           silos.map((silo) => (

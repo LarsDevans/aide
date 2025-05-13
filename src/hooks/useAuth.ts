@@ -1,19 +1,18 @@
-import { auth } from "@/lib/auth";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { useEffect, useState } from "react";
+"use client"
 
-export default function useAuth() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+import { AuthContext } from "@/contexts/AuthProvider"
+import { useRouter } from "next/navigation"
+import { useContext, useEffect } from "react"
+
+export const useAuth = () => {
+  const { currentUser, isLoading } = useContext(AuthContext)
+  const router = useRouter()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setIsLoading(false);
-    });
+    if (!isLoading && currentUser === null) {
+      router.push("/auth/login")
+    }
+  }, [currentUser, router, isLoading])
 
-    return () => unsubscribe();
-  }, []);
-
-  return { currentUser, isLoading };
+  return { currentUser, isLoading }
 }
