@@ -2,8 +2,9 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { getByUid, update } from "@/lib/silo";
+import { archive, getByUid, update } from "@/lib/silo";
 import { updateSchema } from "@/lib/validation/silo";
+import { Silo } from "@/types/silo";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
@@ -13,6 +14,7 @@ export default function SiloEditForm({ uid }: { uid: string }) {
     name: "",
     description: "",
   });
+  const [silo, setSilo] = useState<Silo | null>(null)
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +27,7 @@ export default function SiloEditForm({ uid }: { uid: string }) {
         name: silo?.name ?? "",
         description: silo?.description ?? ""
       });
+      setSilo(silo)
     }
     fetchSilo();
   }, [uid]);
@@ -76,6 +79,11 @@ export default function SiloEditForm({ uid }: { uid: string }) {
     }
   };
 
+  const archiveSilo = async () => {
+    await archive(silo?.uid ?? "")
+    router.push('/silo')
+  }
+
   return (
     <div className="text-center">
 
@@ -98,6 +106,7 @@ export default function SiloEditForm({ uid }: { uid: string }) {
         />
         <div className="pt-2 flex justify-between items-center">
           <Link className="underline" href="/silo">Annuleren</Link>
+          <Button label="Archiveren" onClick={archiveSilo} />
           <Button disabled={isSubmitting} label="Silo aanpassen" type="submit" />
         </div>
 

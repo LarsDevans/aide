@@ -24,10 +24,6 @@ export default function SiloIndex() {
     return () => unsubscribe()
   }, [currentUser?.uid])
 
-  const archiveSilo = async (silo: Silo) => {
-    await archive(silo?.uid ?? "")
-  }
-
   return (
     <div className="flex flex-col w-96">
 
@@ -48,7 +44,6 @@ export default function SiloIndex() {
                 <Link className="underline" href={`/silo/edit/${silo.uid}`}>
                   Wijzig
                 </Link>
-                <Button label="Archiveren" onClick={() => archiveSilo(silo)} />
               </div>
             </li>
           ))
