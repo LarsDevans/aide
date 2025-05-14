@@ -1,10 +1,9 @@
 "use client"
 
 import SiloCreateCta from "@/components/silo/SiloCreateCta"
-import Button from "@/components/ui/Button"
 import EmptyState from "@/components/ui/EmptyState"
 import { useAuth } from "@/hooks/useAuth"
-import { archive, listenForByOwnerUid } from "@/lib/silo"
+import { listenForByOwnerUid } from "@/lib/silo"
 import { Silo } from "@/types/silo"
 import Link from "next/link"
 import { useEffect, useState } from "react"
