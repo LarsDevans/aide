@@ -53,16 +53,19 @@ export default function LoginForm() {
         return
       }
       setSuccess("Succesvol ingelogd. Even geduld...")
-      router.push('/silo')
-    } catch (error: any) { // eslint-disable-line
+      router.push("/silo")
+    } catch (error: any) {
+      // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden")
     }
   }
 
   return (
     <div className="text-center">
-
-      <form className="flex flex-col items-center space-y-2 w-72" onSubmit={handleSubmit}>
+      <form
+        className="flex w-72 flex-col items-center space-y-2"
+        onSubmit={handleSubmit}
+      >
         <h1 className="text-xl font-bold">Login met jouw Aide account</h1>
 
         <Input
@@ -79,17 +82,26 @@ export default function LoginForm() {
           value={formData.password}
           onChange={handleInputChange}
         />
-        <Button disabled={isLoading} label="Inloggen" type="submit" width="w-full" />
+        <Button
+          disabled={isLoading}
+          label="Inloggen"
+          type="submit"
+          width="w-full"
+        />
 
         <div className="flex space-x-1">
           <p>Nog geen account?</p>
-          <Link className="underline" href="/auth/register">Meld je aan</Link>
+          <Link
+            className="underline"
+            href="/auth/register"
+          >
+            Meld je aan
+          </Link>
         </div>
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
       </form>
-
     </div>
   )
 }

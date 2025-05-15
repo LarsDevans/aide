@@ -25,7 +25,7 @@ export default function SiloEditForm({ uid }: { uid: string }) {
       const silo = await getByUid(uid)
       setFormData({
         name: silo?.name ?? "",
-        description: silo?.description ?? ""
+        description: silo?.description ?? "",
       })
       setSilo(silo)
     }
@@ -61,35 +61,37 @@ export default function SiloEditForm({ uid }: { uid: string }) {
 
   const updateSilo = async () => {
     try {
-      const result = await update(
-        uid,
-        {
-          name: formData.name,
-          description: formData.description 
-        }
-      )
+      const result = await update(uid, {
+        name: formData.name,
+        description: formData.description,
+      })
       if (result === null) {
         setError("Firebase foutmelding (zie console)")
         return
       }
       setSuccess("Silo aangepast. Even geduld...")
-      router.push('/silo')
-    } catch (error: any) { // eslint-disable-line
+      router.push("/silo")
+    } catch (error: any) {
+      // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden")
     }
   }
 
   const archiveSilo = async () => {
     await archive(silo?.uid ?? "")
-    router.push('/silo')
+    router.push("/silo")
   }
 
   return (
-    <div className="text-center w-96 space-y-2">
+    <div className="w-96 space-y-2 text-center">
+      <h1 className="text-center text-xl font-bold">
+        Pas de silo gegevens aan
+      </h1>
 
-      <h1 className="text-center font-bold text-xl">Pas de silo gegevens aan</h1>
-
-      <form className="flex flex-col space-y-2" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-col space-y-2"
+        onSubmit={handleSubmit}
+      >
         <Input
           name="name"
           placeholder="Naam"
@@ -104,18 +106,29 @@ export default function SiloEditForm({ uid }: { uid: string }) {
           value={formData.description}
           onChange={handleInputChange}
         />
-        <div className="pt-2 flex justify-between items-center space-x-2">
-          <Link className="underline" href="/silo">Annuleren</Link>
+        <div className="flex items-center justify-between space-x-2 pt-2">
+          <Link
+            className="underline"
+            href="/silo"
+          >
+            Annuleren
+          </Link>
           <div className="space-x-2">
-            <Button label="Archiveren" onClick={archiveSilo} />
-            <Button disabled={isSubmitting} label="Silo aanpassen" type="submit" />
+            <Button
+              label="Archiveren"
+              onClick={archiveSilo}
+            />
+            <Button
+              disabled={isSubmitting}
+              label="Silo aanpassen"
+              type="submit"
+            />
           </div>
         </div>
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
       </form>
-
     </div>
   )
 }

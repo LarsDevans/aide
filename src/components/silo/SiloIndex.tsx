@@ -19,46 +19,53 @@ export default function SiloIndex() {
       (silos: Silo[]) => {
         const activeSilos = silos.filter((silo) => !silo.isArchived)
         setSilos(activeSilos)
-      }
+      },
     )
     return () => unsubscribe()
   }, [currentUser?.uid])
 
   return (
-    <div className="flex flex-col w-96 space-y-2">
-
-      <h1 className="text-center font-bold text-xl">Jouw silos</h1>
+    <div className="flex w-96 flex-col space-y-2">
+      <h1 className="text-center text-xl font-bold">Jouw silos</h1>
 
       <ul className="space-y-2">
-        {silos && silos.length > 0 ? (
-          silos.map((silo) => (
-            <li
-              key={silo.uid}
-              className="border rounded p-2 flex justify-between items-center"
-            >
-              <div>
-                <p className="font-bold">{silo.name}</p>
-                {silo.description && <p className="italic">{silo.description}</p>}
-              </div>
-              <Link className="px-2" href={`/silo/edit/${silo.uid}`}>
-                <PencilLine />
-              </Link>
-            </li>
-          ))
-        ) : (
-          silos && <EmptyState cta={<SiloCreateCta />} />
-        )}
+        {silos && silos.length > 0
+          ? silos.map((silo) => (
+              <li
+                key={silo.uid}
+                className="flex items-center justify-between rounded border p-2"
+              >
+                <div>
+                  <p className="font-bold">{silo.name}</p>
+                  {silo.description && (
+                    <p className="italic">{silo.description}</p>
+                  )}
+                </div>
+                <Link
+                  className="px-2"
+                  href={`/silo/edit/${silo.uid}`}
+                >
+                  <PencilLine />
+                </Link>
+              </li>
+            ))
+          : silos && <EmptyState cta={<SiloCreateCta />} />}
       </ul>
 
       <div className="flex justify-between">
-        <Link className="underline" href="/silo/create">
+        <Link
+          className="underline"
+          href="/silo/create"
+        >
           Nieuwe silo aanmaken
         </Link>
-        <Link className="underline" href="/silo/archive">
+        <Link
+          className="underline"
+          href="/silo/archive"
+        >
           Naar archief
         </Link>
       </div>
-
     </div>
   )
 }

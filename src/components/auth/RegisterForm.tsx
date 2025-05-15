@@ -54,16 +54,19 @@ export default function RegisterForm() {
         return
       }
       setSuccess("Account aangemaakt. Even geduld...")
-      router.push('/auth/login')
-    } catch (error: any) { // eslint-disable-line
+      router.push("/auth/login")
+    } catch (error: any) {
+      // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden")
     }
   }
 
   return (
     <div className="text-center">
-
-      <form className="flex flex-col items-center space-y-2 w-72" onSubmit={handleSubmit}>
+      <form
+        className="flex w-72 flex-col items-center space-y-2"
+        onSubmit={handleSubmit}
+      >
         <h1 className="text-xl font-bold">Registreer een Aide account</h1>
 
         <Input
@@ -87,17 +90,26 @@ export default function RegisterForm() {
           value={formData.passwordConfirm}
           onChange={handleInputChange}
         />
-        <Button disabled={isLoading} label="Account registreren" type="submit" width="w-full" />
+        <Button
+          disabled={isLoading}
+          label="Account registreren"
+          type="submit"
+          width="w-full"
+        />
 
         <div className="flex space-x-1">
           <p>Al een account?</p>
-          <Link className="underline" href="/auth/login">Log in</Link>
+          <Link
+            className="underline"
+            href="/auth/login"
+          >
+            Log in
+          </Link>
         </div>
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
       </form>
-
     </div>
   )
 }

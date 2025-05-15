@@ -1,7 +1,7 @@
 export default function LoadingState() {
   return (
-    <div className="border rounded text-center space-y-2 p-4">
-      <p className="font-bold text-xl">Even geduld!</p>
+    <div className="space-y-2 rounded border p-4 text-center">
+      <p className="text-xl font-bold">Even geduld!</p>
       <p>We zijn gegevens aan het inladen</p>
     </div>
   )

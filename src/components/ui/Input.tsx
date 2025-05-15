@@ -9,7 +9,7 @@ export default function Input({
 }: InputType) {
   return (
     <input
-      className="border p-2 rounded w-full"
+      className="w-full rounded border p-2"
       name={name}
       placeholder={placeholder}
       type={type}

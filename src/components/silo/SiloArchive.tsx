@@ -19,7 +19,7 @@ export default function SiloArchive() {
       (silos: Silo[]) => {
         const archivedSilos = silos.filter((silo) => silo.isArchived)
         setSilos(archivedSilos)
-      }
+      },
     )
     return () => unsubscribe()
   }, [currentUser?.uid])
@@ -29,33 +29,37 @@ export default function SiloArchive() {
   }
 
   return (
-    <div className="flex flex-col w-96 space-y-2">
-
-      <h1 className="text-center font-bold text-xl">Jouw silo archief</h1>
+    <div className="flex w-96 flex-col space-y-2">
+      <h1 className="text-center text-xl font-bold">Jouw silo archief</h1>
 
       <ul className="space-y-2">
-        {silos && silos.length > 0 ? (
-          silos.map((silo) => (
-            <li
-              key={silo.uid}
-              className="flex border p-2 rounded justify-between items-center"
-            >
-              <div className="w-full">
-                <p className="font-bold">{silo.name}</p>
-                {silo.description && <p className="italic">{silo.description}</p>}
-              </div>
-              <IconButton icon={<ArchiveRestore />} onClick={() => unarchiveSilo(silo)} />
-            </li>
-          ))
-        ) : (
-          silos && <EmptyState />
-        )}
+        {silos && silos.length > 0
+          ? silos.map((silo) => (
+              <li
+                key={silo.uid}
+                className="flex items-center justify-between rounded border p-2"
+              >
+                <div className="w-full">
+                  <p className="font-bold">{silo.name}</p>
+                  {silo.description && (
+                    <p className="italic">{silo.description}</p>
+                  )}
+                </div>
+                <IconButton
+                  icon={<ArchiveRestore />}
+                  onClick={() => unarchiveSilo(silo)}
+                />
+              </li>
+            ))
+          : silos && <EmptyState />}
       </ul>
 
-      <Link className="underline w-fit" href="/silo">
+      <Link
+        className="w-fit underline"
+        href="/silo"
+      >
         Terug naar overzicht
       </Link>
-
     </div>
   )
 }

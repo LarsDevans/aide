@@ -5,11 +5,11 @@ export default function Button({
   label,
   type = "button",
   width = "w-fit",
-  onClick
+  onClick,
 }: ButtonType) {
   return (
     <button
-      className={`${width} border p-2 rounded cursor-pointer disabled:cursor-not-allowed font-bold`}
+      className={`${width} cursor-pointer rounded border p-2 font-bold disabled:cursor-not-allowed`}
       disabled={disabled}
       type={type}
       onClick={(e) => onClick && onClick(e)}

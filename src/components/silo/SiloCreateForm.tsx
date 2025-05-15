@@ -49,27 +49,35 @@ export default function SiloCreateForm() {
 
   const createSilo = async () => {
     try {
-      const result = await create({
+      const result = await create(
+        {
           name: formData.name,
-          description: formData.description 
-      }, currentUser?.uid ?? "")
+          description: formData.description,
+        },
+        currentUser?.uid ?? "",
+      )
       if (result === null) {
         setError("Firebase foutmelding (zie console)")
         return
       }
       setSuccess("Silo aangemaakt. Even geduld...")
-      router.push('/silo')
-    } catch (error: any) { // eslint-disable-line
+      router.push("/silo")
+    } catch (error: any) {
+      // eslint-disable-line
       setError(error.message || "Er is een onbeschrijfelijke fout opgetreden")
     }
   }
 
   return (
-    <div className="text-center w-96 space-y-2">
+    <div className="w-96 space-y-2 text-center">
+      <h1 className="text-center text-xl font-bold">
+        Maak een nieuwe silo aan
+      </h1>
 
-      <h1 className="text-center font-bold text-xl">Maak een nieuwe silo aan</h1>
-
-      <form className="flex flex-col space-y-2" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-col space-y-2"
+        onSubmit={handleSubmit}
+      >
         <Input
           name="name"
           placeholder="Naam"
@@ -85,15 +93,23 @@ export default function SiloCreateForm() {
           onChange={handleInputChange}
         />
 
-        <div className="flex space-x-2 justify-between items-center">
-          <Link className="underline" href="/silo">Annuleren</Link>
-          <Button disabled={isSubmitting} label="Silo aanmaken" type="submit" />
+        <div className="flex items-center justify-between space-x-2">
+          <Link
+            className="underline"
+            href="/silo"
+          >
+            Annuleren
+          </Link>
+          <Button
+            disabled={isSubmitting}
+            label="Silo aanmaken"
+            type="submit"
+          />
         </div>
 
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
       </form>
-
     </div>
   )
 }

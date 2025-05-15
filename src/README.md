@@ -1,7 +1,7 @@
 ### 📁 Project Directory Structure Overview
 
 | Path (`src/` omitted)           | Purpose                                                        |
-| ------------------------------- | ---------------------------------------------------------------|
+| ------------------------------- | -------------------------------------------------------------- |
 | `app/`                          | Top-level routing using Next.js App Router                     |
 | `app/tasks/`                    | Pages for task CRUD operations                                 |
 | `app/tasks/page.tsx`            | Displays list of tasks                                         |
