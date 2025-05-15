@@ -1,4 +1,5 @@
 import { app } from "@/lib/firebase"
+import { FirebaseError } from "firebase/app"
 import {
   browserSessionPersistence,
   createUserWithEmailAndPassword,
@@ -25,9 +26,12 @@ export async function signUp(
 ): Promise<UserCredential | null> {
   try {
     return await createUserWithEmailAndPassword(auth, email, password)
-  } catch (error: any) {
-    // eslint-disable-line
-    console.error("Firebase foutmelding, details in console:", error.code)
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
     return null
   }
 }
@@ -40,9 +44,12 @@ export async function signIn(
     .then(async () => {
       return await signInWithEmailAndPassword(auth, email, password)
     })
-    .catch((error: any) => {
-      // eslint-disable-line
-      console.error("Firebase foutmelding, details in console:", error.code)
+    .catch((error: unknown) => {
+      if (error instanceof FirebaseError) {
+        console.error("Firebase foutmelding, details in console:", error.code)
+      } else {
+        console.error("Er is een onbeschrijfelijke fout opgetreden")
+      }
       return null
     })
 }

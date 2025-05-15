@@ -1,5 +1,6 @@
 import { db } from "@/lib/firebase"
 import { Silo } from "@/types/silo"
+import { FirebaseError } from "firebase/app"
 import { Unsubscribe } from "firebase/auth"
 import {
   collection,
@@ -20,9 +21,12 @@ export async function getByUid(uid: string): Promise<Silo | null> {
     const docRef = doc(db, documentName, uid)
     const docSnap = await getDoc(docRef)
     return docSnap.exists() ? (docSnap.data() as Silo) : null
-  } catch (error: any) {
-    // eslint-disable-line
-    console.error("Firebase foutmelding, details in console:", error.code)
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
     return null
   }
 }
@@ -59,9 +63,12 @@ export async function create(
     silo = { ...silo, uid: uid(32), ownerUid: ownerUid }
     await setDoc(doc(db, documentName, String(silo.uid)), silo)
     return silo
-  } catch (error: any) {
-    // eslint-disable-line
-    console.error("Firebase foutmelding, details in console:", error.code)
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
     return null
   }
 }
@@ -74,9 +81,12 @@ export async function update(
     const docRef = doc(db, documentName, uid)
     await updateDoc(docRef, nextSilo)
     return nextSilo
-  } catch (error: any) {
-    // eslint-disable-line
-    console.error("Firebase foutmelding, details in console:", error.code)
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
     return null
   }
 }

@@ -54,9 +54,12 @@ export default function LoginForm() {
       }
       setSuccess("Succesvol ingelogd. Even geduld...")
       router.push("/silo")
-    } catch (error: any) {
-      // eslint-disable-line
-      setError(error.message || "Er is een onbeschrijfelijke fout opgetreden")
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError("Er is een onbeschrijfelijke fout opgetreden")
+      }
     }
   }
 
