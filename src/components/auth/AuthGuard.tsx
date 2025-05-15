@@ -4,12 +4,12 @@ import LoadingState from "@/components/ui/LoadingState"
 import { useAuth } from "@/hooks/useAuth"
 import { ReactNode } from "react"
 
-export default function AuthGuard({ children }: { children: ReactNode}) {
+export default function AuthGuard({ children }: { children: ReactNode }) {
   const { currentUser, isLoading } = useAuth()
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center w-full h-full min-h-screen">
+      <div className="flex h-full min-h-screen w-full items-center justify-center">
         <LoadingState />
       </div>
     )

@@ -1,4 +1,4 @@
-import { Input as InputType } from "@/types/ui";
+import { Input as InputType } from "@/types/ui"
 
 export default function Input({
   name,
@@ -9,12 +9,12 @@ export default function Input({
 }: InputType) {
   return (
     <input
-      className="border"
+      className="w-full rounded border p-2"
       name={name}
       placeholder={placeholder}
       type={type}
       value={value}
       onChange={(e) => onChange(e)}
     />
-  );
+  )
 }

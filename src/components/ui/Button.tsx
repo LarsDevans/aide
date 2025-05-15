@@ -4,11 +4,12 @@ export default function Button({
   disabled = false,
   label,
   type = "button",
-  onClick
+  width = "w-fit",
+  onClick,
 }: ButtonType) {
   return (
     <button
-      className="border cursor-pointer disabled:cursor-not-allowed"
+      className={`${width} cursor-pointer rounded border p-2 font-bold disabled:cursor-not-allowed`}
       disabled={disabled}
       type={type}
       onClick={(e) => onClick && onClick(e)}
