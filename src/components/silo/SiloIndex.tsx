@@ -5,6 +5,7 @@ import EmptyState from "@/components/ui/EmptyState"
 import { useAuth } from "@/hooks/useAuth"
 import { listenForByOwnerUid } from "@/lib/silo"
 import { Silo } from "@/types/silo"
+import { PencilLine } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
@@ -24,26 +25,24 @@ export default function SiloIndex() {
   }, [currentUser?.uid])
 
   return (
-    <div className="flex flex-col w-96">
+    <div className="flex flex-col w-96 space-y-2">
 
-      <h1 className="text-center font-bold text-lg">Jouw silos</h1>
+      <h1 className="text-center font-bold text-xl">Jouw silos</h1>
 
-      <ul>
+      <ul className="space-y-2">
         {silos && silos.length > 0 ? (
           silos.map((silo) => (
             <li
               key={silo.uid}
-              className="border p-2 flex justify-between items-center"
+              className="border rounded p-2 flex justify-between items-center"
             >
               <div>
                 <p className="font-bold">{silo.name}</p>
                 {silo.description && <p className="italic">{silo.description}</p>}
               </div>
-              <div className="space-x-2">
-                <Link className="underline" href={`/silo/edit/${silo.uid}`}>
-                  Wijzig
-                </Link>
-              </div>
+              <Link className="px-2" href={`/silo/edit/${silo.uid}`}>
+                <PencilLine />
+              </Link>
             </li>
           ))
         ) : (

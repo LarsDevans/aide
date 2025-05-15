@@ -6,7 +6,7 @@ export const registerSchema = z.object({
     .email({ message: "Ongeldig e-mailadres" }),
   password: z
     .string()
-    .min(6, { message: "Het wachtwoord moet minimaal 6 karakters lang zijn" }),
+    .min(6, { message: "Het wachtwoord is te kort (min. 6)" }),
   passwordConfirm: z
     .string(),
 })
