@@ -7,9 +7,9 @@ import { Silo } from "@/types/silo"
 import { ArchiveRestore } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import IconButton from "../ui/IconButton"
+import IconButton from "../../ui/IconButton"
 
-export default function SiloArchive() {
+export default function SiloViewArchive() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
   const { currentUser } = useAuth()
 

@@ -1,6 +1,6 @@
 "use client"
 
-import SiloCreateCta from "@/components/silo/SiloCreateCta"
+import SiloCtaCreate from "@/components/silo/cta/Create"
 import EmptyState from "@/components/ui/EmptyState"
 import { useAuth } from "@/hooks/useAuth"
 import { listenForByOwnerUid } from "@/lib/silo"
@@ -9,7 +9,7 @@ import { PencilLine } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
-export default function SiloIndex() {
+export default function SiloViewIndex() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
   const { currentUser } = useAuth()
 
@@ -49,7 +49,7 @@ export default function SiloIndex() {
                 </Link>
               </li>
             ))
-          : silos && <EmptyState cta={<SiloCreateCta />} />}
+          : silos && <EmptyState cta={<SiloCtaCreate />} />}
       </ul>
 
       <div className="flex justify-between">

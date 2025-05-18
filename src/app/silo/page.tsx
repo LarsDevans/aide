@@ -1,10 +1,5 @@
-import SiloLayout from "@/app/silo/layout"
-import SiloIndex from "@/components/silo/SiloIndex"
+import SiloViewIndex from "@/components/silo/views/Index"
 
 export default function SiloIndexPage() {
-  return (
-    <SiloLayout>
-      <SiloIndex />
-    </SiloLayout>
-  )
+  return <SiloViewIndex />
 }

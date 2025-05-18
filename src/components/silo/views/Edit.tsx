@@ -2,23 +2,35 @@
 
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
-import { useAuth } from "@/hooks/useAuth"
-import { create } from "@/lib/silo"
-import { createSchema } from "@/lib/validation/silo"
+import { archive, getByUid, update } from "@/lib/silo"
+import { updateSchema } from "@/lib/validation/silo"
+import { Silo } from "@/types/silo"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 
-export default function SiloCreateForm() {
+export default function SiloViewEdit({ uid }: { uid: string }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
   })
+  const [silo, setSilo] = useState<Silo | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { currentUser } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    const fetchSilo = async () => {
+      const silo = await getByUid(uid)
+      setFormData({
+        name: silo?.name ?? "",
+        description: silo?.description ?? "",
+      })
+      setSilo(silo)
+    }
+    fetchSilo()
+  }, [uid])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -32,14 +44,14 @@ export default function SiloCreateForm() {
     setIsSubmitting(true)
 
     if (validateSchema()) {
-      await createSilo()
+      await updateSilo()
     }
 
     setIsSubmitting(false)
   }
 
   const validateSchema = (): boolean => {
-    const result = createSchema.safeParse(formData)
+    const result = updateSchema.safeParse(formData)
     if (result.error) {
       setError(result.error.errors[0].message)
       return false
@@ -47,20 +59,17 @@ export default function SiloCreateForm() {
     return true
   }
 
-  const createSilo = async () => {
+  const updateSilo = async () => {
     try {
-      const result = await create(
-        {
-          name: formData.name,
-          description: formData.description,
-        },
-        currentUser?.uid ?? "",
-      )
+      const result = await update(uid, {
+        name: formData.name,
+        description: formData.description,
+      })
       if (result === null) {
         setError("Firebase foutmelding (zie console)")
         return
       }
-      setSuccess("Silo aangemaakt. Even geduld...")
+      setSuccess("Silo aangepast. Even geduld...")
       router.push("/silo")
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -71,10 +80,15 @@ export default function SiloCreateForm() {
     }
   }
 
+  const archiveSilo = async () => {
+    await archive(silo?.uid ?? "")
+    router.push("/silo")
+  }
+
   return (
     <div className="w-96 space-y-2 text-center">
       <h1 className="text-center text-xl font-bold">
-        Maak een nieuwe silo aan
+        Pas de silo gegevens aan
       </h1>
 
       <form
@@ -95,19 +109,24 @@ export default function SiloCreateForm() {
           value={formData.description}
           onChange={handleInputChange}
         />
-
-        <div className="flex items-center justify-between space-x-2">
+        <div className="flex items-center justify-between space-x-2 pt-2">
           <Link
             className="underline"
             href="/silo"
           >
             Annuleren
           </Link>
-          <Button
-            disabled={isSubmitting}
-            label="Silo aanmaken"
-            type="submit"
-          />
+          <div className="space-x-2">
+            <Button
+              label="Archiveren"
+              onClick={archiveSilo}
+            />
+            <Button
+              disabled={isSubmitting}
+              label="Silo aanpassen"
+              type="submit"
+            />
+          </div>
         </div>
 
         {error && <p className="text-red-500">{error}</p>}
