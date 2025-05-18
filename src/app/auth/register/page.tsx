@@ -1,5 +1,5 @@
-import RegisterForm from "@/components/auth/RegisterForm"
+import AuthViewRegister from "@/components/auth/views/Register"
 
 export default function RegisterPage() {
-  return <RegisterForm />
+  return <AuthViewRegister />
 }
