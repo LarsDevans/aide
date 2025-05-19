@@ -1,22 +1,17 @@
 "use client"
 
 import EmptyState from "@/components/ui/EmptyState"
-import { useAuth } from "@/hooks/useAuth"
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 import { listenForByOwnerUid, unarchive } from "@/lib/silo"
 import { Silo } from "@/types/silo"
 import { ArchiveRestore } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import IconButton from "../../ui/IconButton"
-import LoadingState from "@/components/ui/LoadingState"
 
 export default function SiloViewArchive() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
-  const { currentUser } = useAuth()
-
-  if (currentUser === null) {
-    return <LoadingState />
-  }
+  const currentUser = useCurrentUser()
 
   useEffect(() => {
     const unsubscribe = listenForByOwnerUid(
