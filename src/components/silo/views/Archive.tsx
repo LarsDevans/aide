@@ -1,13 +1,13 @@
 "use client"
 
 import EmptyState from "@/components/ui/EmptyState"
+import IconButton from "@/components/ui/IconButton"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
 import { listenForByOwnerUid, unarchive } from "@/lib/silo"
 import { Silo } from "@/types/silo"
 import { ArchiveRestore } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import IconButton from "../../ui/IconButton"
 
 export default function SiloViewArchive() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
