@@ -2,6 +2,7 @@
 
 import SiloCtaCreate from "@/components/silo/cta/Create"
 import EmptyState from "@/components/ui/EmptyState"
+import LoadingState from "@/components/ui/LoadingState"
 import { useAuth } from "@/hooks/useAuth"
 import { listenForByOwnerUid } from "@/lib/silo"
 import { Silo } from "@/types/silo"
@@ -13,16 +14,20 @@ export default function SiloViewIndex() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
   const { currentUser } = useAuth()
 
+  if (currentUser === null) {
+    return <LoadingState />
+  }
+
   useEffect(() => {
     const unsubscribe = listenForByOwnerUid(
-      currentUser?.uid ?? "",
+      currentUser.uid,
       (silos: Silo[]) => {
         const activeSilos = silos.filter((silo) => !silo.isArchived)
         setSilos(activeSilos)
       },
     )
     return () => unsubscribe()
-  }, [currentUser?.uid])
+  }, [currentUser.uid])
 
   return (
     <div className="flex w-96 flex-col space-y-2">

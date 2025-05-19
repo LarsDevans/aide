@@ -1,9 +1,9 @@
 export type Silo = {
-  uid?: string
+  uid: string
   name: string
   description?: string
-  isArchived?: boolean
-  ownerUid?: string
+  isArchived: boolean
+  ownerUid: string
 }
 
 export type SiloFormData = {

@@ -22,8 +22,14 @@ export default function SiloViewEdit({ uid }: { uid: string }) {
     fetchSilo()
   }, [uid])
 
+  // To prevent unexpected behavior, we make sure the silo is loaded.
+  if (silo === null) {
+    return <LoadingState />
+  }
+
   const updateSilo = async (siloFormData: SiloFormData) => {
     const result = await update(uid, {
+      ...silo,
       name: siloFormData.name,
       description: siloFormData.description,
     })
@@ -34,7 +40,7 @@ export default function SiloViewEdit({ uid }: { uid: string }) {
   }
 
   const archiveSilo = async () => {
-    await archive(silo?.uid ?? "")
+    await archive(silo.uid)
     router.push("/silo")
   }
 
@@ -54,11 +60,6 @@ export default function SiloViewEdit({ uid }: { uid: string }) {
       onClick={archiveSilo}
     />
   )
-
-  // To prevent empty input fields, we make sure the silo is loaded.
-  if (silo === null) {
-    return <LoadingState />
-  }
 
   return (
     <SiloForm

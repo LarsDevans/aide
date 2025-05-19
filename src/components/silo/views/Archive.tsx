@@ -8,24 +8,29 @@ import { ArchiveRestore } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import IconButton from "../../ui/IconButton"
+import LoadingState from "@/components/ui/LoadingState"
 
 export default function SiloViewArchive() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
   const { currentUser } = useAuth()
 
+  if (currentUser === null) {
+    return <LoadingState />
+  }
+
   useEffect(() => {
     const unsubscribe = listenForByOwnerUid(
-      currentUser?.uid ?? "",
+      currentUser.uid,
       (silos: Silo[]) => {
         const archivedSilos = silos.filter((silo) => silo.isArchived)
         setSilos(archivedSilos)
       },
     )
     return () => unsubscribe()
-  }, [currentUser?.uid])
+  }, [currentUser.uid])
 
   const unarchiveSilo = async (silo: Silo) => {
-    await unarchive(silo?.uid ?? "")
+    await unarchive(silo.uid)
   }
 
   return (

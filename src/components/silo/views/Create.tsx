@@ -1,6 +1,7 @@
 "use client"
 
 import SiloForm from "@/components/silo/SiloForm"
+import LoadingState from "@/components/ui/LoadingState"
 import { useAuth } from "@/hooks/useAuth"
 import { create } from "@/lib/silo"
 import { createSchema } from "@/lib/validation/silo"
@@ -12,13 +13,15 @@ export default function SiloViewCreate() {
   const { currentUser } = useAuth()
   const router = useRouter()
 
+  if (currentUser === null) {
+    return <LoadingState />
+  }
+
   const createSilo = async (siloFormData: SiloFormData) => {
     const result = await create(
-      {
-        name: siloFormData.name,
-        description: siloFormData.description,
-      },
-      currentUser?.uid ?? "",
+      siloFormData.name,
+      siloFormData.description,
+      currentUser.uid,
     )
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")
