@@ -47,6 +47,7 @@ export default function SiloViewArchive() {
                 </div>
                 <IconButton
                   icon={<ArchiveRestore />}
+                  type="button"
                   onClick={() => unarchiveSilo(silo)}
                 />
               </li>

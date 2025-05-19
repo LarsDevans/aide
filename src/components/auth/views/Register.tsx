@@ -96,7 +96,6 @@ export default function AuthViewRegister() {
         <Button
           disabled={isLoading}
           label="Account registreren"
-          type="submit"
           width="w-full"
         />
 

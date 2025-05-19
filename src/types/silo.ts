@@ -5,3 +5,8 @@ export type Silo = {
   isArchived?: boolean
   ownerUid?: string
 }
+
+export type SiloFormData = {
+  name: string
+  description: string
+}

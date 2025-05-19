@@ -1,118 +1,47 @@
 "use client"
 
-import Button from "@/components/ui/Button"
-import Input from "@/components/ui/Input"
+import SiloForm from "@/components/silo/SiloForm"
 import { useAuth } from "@/hooks/useAuth"
 import { create } from "@/lib/silo"
 import { createSchema } from "@/lib/validation/silo"
+import { SiloFormData } from "@/types/silo"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, FormEvent, useState } from "react"
 
 export default function SiloViewCreate() {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-  })
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { currentUser } = useAuth()
   const router = useRouter()
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
-    setIsSubmitting(true)
-
-    if (validateSchema()) {
-      await createSilo()
+  const createSilo = async (siloFormData: SiloFormData) => {
+    const result = await create(
+      {
+        name: siloFormData.name,
+        description: siloFormData.description,
+      },
+      currentUser?.uid ?? "",
+    )
+    if (result === null) {
+      throw Error("Firebase foutmelding (zie console)")
     }
-
-    setIsSubmitting(false)
+    router.push("/silo")
   }
 
-  const validateSchema = (): boolean => {
-    const result = createSchema.safeParse(formData)
-    if (result.error) {
-      setError(result.error.errors[0].message)
-      return false
-    }
-    return true
-  }
-
-  const createSilo = async () => {
-    try {
-      const result = await create(
-        {
-          name: formData.name,
-          description: formData.description,
-        },
-        currentUser?.uid ?? "",
-      )
-      if (result === null) {
-        setError("Firebase foutmelding (zie console)")
-        return
-      }
-      setSuccess("Silo aangemaakt. Even geduld...")
-      router.push("/silo")
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message)
-      } else {
-        setError("Er is een onbeschrijfelijke fout opgetreden")
-      }
-    }
-  }
+  const formLinkActions = (
+    <Link
+      className="underline"
+      href="/silo"
+    >
+      Annuleren
+    </Link>
+  )
 
   return (
-    <div className="w-96 space-y-2 text-center">
-      <h1 className="text-center text-xl font-bold">
-        Maak een nieuwe silo aan
-      </h1>
-
-      <form
-        className="flex flex-col space-y-2"
-        onSubmit={handleSubmit}
-      >
-        <Input
-          name="name"
-          placeholder="Naam"
-          type="text"
-          value={formData.name}
-          onChange={handleInputChange}
-        />
-        <Input
-          name="description"
-          placeholder="Omschrijving"
-          type="text"
-          value={formData.description}
-          onChange={handleInputChange}
-        />
-
-        <div className="flex items-center justify-between space-x-2">
-          <Link
-            className="underline"
-            href="/silo"
-          >
-            Annuleren
-          </Link>
-          <Button
-            disabled={isSubmitting}
-            label="Silo aanmaken"
-            type="submit"
-          />
-        </div>
-
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
-      </form>
-    </div>
+    <SiloForm
+      linkActions={formLinkActions}
+      submitText="Silo aanmaken"
+      title="Maak een nieuwe silo aan"
+      validation={createSchema}
+      submitAction={createSilo}
+    />
   )
 }

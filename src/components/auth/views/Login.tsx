@@ -88,7 +88,6 @@ export default function AuthViewLogin() {
         <Button
           disabled={isLoading}
           label="Inloggen"
-          type="submit"
           width="w-full"
         />
 
