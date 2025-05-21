@@ -3,7 +3,7 @@ import { Button as ButtonType } from "@/types/ui"
 export default function Button({
   disabled = false,
   label,
-  type = "button",
+  type = "submit",
   width = "w-fit",
   onClick,
 }: ButtonType) {

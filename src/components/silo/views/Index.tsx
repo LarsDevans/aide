@@ -1,28 +1,28 @@
 "use client"
 
-import SiloCreateCta from "@/components/silo/SiloCreateCta"
+import SiloCtaCreate from "@/components/silo/cta/Create"
 import EmptyState from "@/components/ui/EmptyState"
-import { useAuth } from "@/hooks/useAuth"
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 import { listenForByOwnerUid } from "@/lib/silo"
 import { Silo } from "@/types/silo"
 import { PencilLine } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
-export default function SiloIndex() {
+export default function SiloViewIndex() {
   const [silos, setSilos] = useState<Silo[] | null>(null)
-  const { currentUser } = useAuth()
+  const currentUser = useCurrentUser()
 
   useEffect(() => {
     const unsubscribe = listenForByOwnerUid(
-      currentUser?.uid ?? "",
+      currentUser.uid,
       (silos: Silo[]) => {
         const activeSilos = silos.filter((silo) => !silo.isArchived)
         setSilos(activeSilos)
       },
     )
     return () => unsubscribe()
-  }, [currentUser?.uid])
+  }, [currentUser.uid])
 
   return (
     <div className="flex w-96 flex-col space-y-2">
@@ -49,7 +49,7 @@ export default function SiloIndex() {
                 </Link>
               </li>
             ))
-          : silos && <EmptyState cta={<SiloCreateCta />} />}
+          : silos && <EmptyState cta={<SiloCtaCreate />} />}
       </ul>
 
       <div className="flex justify-between">

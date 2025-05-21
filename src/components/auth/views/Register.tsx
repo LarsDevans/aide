@@ -2,22 +2,21 @@
 
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
-import { useAuth } from "@/hooks/useAuth"
-import { create } from "@/lib/silo"
-import { createSchema } from "@/lib/validation/silo"
+import { signUp } from "@/lib/auth"
+import { registerSchema } from "@/lib/validation/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ChangeEvent, FormEvent, useState } from "react"
 
-export default function SiloCreateForm() {
+export default function AuthViewRegister() {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
   })
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { currentUser } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,17 +28,17 @@ export default function SiloCreateForm() {
     e.preventDefault()
     setError(null)
     setSuccess(null)
-    setIsSubmitting(true)
+    setIsLoading(true)
 
     if (validateSchema()) {
-      await createSilo()
+      await registerUser()
     }
 
-    setIsSubmitting(false)
+    setIsLoading(false)
   }
 
   const validateSchema = (): boolean => {
-    const result = createSchema.safeParse(formData)
+    const result = registerSchema.safeParse(formData)
     if (result.error) {
       setError(result.error.errors[0].message)
       return false
@@ -47,21 +46,15 @@ export default function SiloCreateForm() {
     return true
   }
 
-  const createSilo = async () => {
+  const registerUser = async () => {
     try {
-      const result = await create(
-        {
-          name: formData.name,
-          description: formData.description,
-        },
-        currentUser?.uid ?? "",
-      )
+      const result = await signUp(formData.email, formData.password)
       if (result === null) {
         setError("Firebase foutmelding (zie console)")
         return
       }
-      setSuccess("Silo aangemaakt. Even geduld...")
-      router.push("/silo")
+      setSuccess("Account aangemaakt. Even geduld...")
+      router.push("/auth/login")
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message)
@@ -72,42 +65,48 @@ export default function SiloCreateForm() {
   }
 
   return (
-    <div className="w-96 space-y-2 text-center">
-      <h1 className="text-center text-xl font-bold">
-        Maak een nieuwe silo aan
-      </h1>
-
+    <div className="text-center">
       <form
-        className="flex flex-col space-y-2"
+        className="flex w-72 flex-col items-center space-y-2"
         onSubmit={handleSubmit}
       >
+        <h1 className="text-xl font-bold">Registreer een Aide account</h1>
+
         <Input
-          name="name"
-          placeholder="Naam"
-          type="text"
-          value={formData.name}
+          name="email"
+          placeholder="E-mail"
+          type="email"
+          value={formData.email}
           onChange={handleInputChange}
         />
         <Input
-          name="description"
-          placeholder="Omschrijving"
-          type="text"
-          value={formData.description}
+          name="password"
+          placeholder="Wachtwoord"
+          type="password"
+          value={formData.password}
           onChange={handleInputChange}
+        />
+        <Input
+          name="passwordConfirm"
+          placeholder="Herhaal wachtwoord"
+          type="password"
+          value={formData.passwordConfirm}
+          onChange={handleInputChange}
+        />
+        <Button
+          disabled={isLoading}
+          label="Account registreren"
+          width="w-full"
         />
 
-        <div className="flex items-center justify-between space-x-2">
+        <div className="flex space-x-1">
+          <p>Al een account?</p>
           <Link
             className="underline"
-            href="/silo"
+            href="/auth/login"
           >
-            Annuleren
+            Log in
           </Link>
-          <Button
-            disabled={isSubmitting}
-            label="Silo aanmaken"
-            type="submit"
-          />
         </div>
 
         {error && <p className="text-red-500">{error}</p>}

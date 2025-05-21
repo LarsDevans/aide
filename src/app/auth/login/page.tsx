@@ -1,10 +1,5 @@
-import AuthLayout from "@/app/auth/layout"
-import LoginForm from "@/components/auth/LoginForm"
+import AuthViewLogin from "@/components/auth/views/Login"
 
 export default function LoginPage() {
-  return (
-    <AuthLayout>
-      <LoginForm />
-    </AuthLayout>
-  )
+  return <AuthViewLogin />
 }

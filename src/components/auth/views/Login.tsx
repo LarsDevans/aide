@@ -8,7 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ChangeEvent, FormEvent, useState } from "react"
 
-export default function LoginForm() {
+export default function AuthViewLogin() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -88,7 +88,6 @@ export default function LoginForm() {
         <Button
           disabled={isLoading}
           label="Inloggen"
-          type="submit"
           width="w-full"
         />
 

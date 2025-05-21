@@ -56,11 +56,18 @@ export function listenForByOwnerUid(
 }
 
 export async function create(
-  silo: Silo,
+  name: string,
   ownerUid: string,
+  description?: string,
 ): Promise<Silo | null> {
   try {
-    silo = { ...silo, uid: uid(32), ownerUid: ownerUid }
+    const silo: Silo = {
+      uid: uid(32),
+      name,
+      description,
+      isArchived: false,
+      ownerUid,
+    }
     await setDoc(doc(db, documentName, String(silo.uid)), silo)
     return silo
   } catch (error: unknown) {

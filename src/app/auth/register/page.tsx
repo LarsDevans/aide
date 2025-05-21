@@ -1,10 +1,5 @@
-import AuthLayout from "@/app/auth/layout"
-import RegisterForm from "@/components/auth/RegisterForm"
+import AuthViewRegister from "@/components/auth/views/Register"
 
 export default function RegisterPage() {
-  return (
-    <AuthLayout>
-      <RegisterForm />
-    </AuthLayout>
-  )
+  return <AuthViewRegister />
 }

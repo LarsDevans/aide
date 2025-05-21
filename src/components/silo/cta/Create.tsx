@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-export default function SiloCreateCta() {
+export default function SiloCtaCreate() {
   return (
     <Link
       className="w-fit underline"

@@ -1,10 +1,5 @@
-import SiloLayout from "@/app/silo/layout"
-import SiloArchive from "@/components/silo/SiloArchive"
+import SiloViewArchive from "@/components/silo/views/Archive"
 
 export default function SiloArchivePage() {
-  return (
-    <SiloLayout>
-      <SiloArchive />
-    </SiloLayout>
-  )
+  return <SiloViewArchive />
 }

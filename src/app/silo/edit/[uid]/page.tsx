@@ -1,5 +1,4 @@
-import SiloLayout from "@/app/silo/layout"
-import SiloEditForm from "@/components/silo/SiloEditForm"
+import SiloViewEdit from "@/components/silo/views/Edit"
 
 export default async function SiloEditPage({
   params,
@@ -7,10 +6,5 @@ export default async function SiloEditPage({
   params: Promise<{ uid: string }>
 }) {
   const { uid } = await params
-
-  return (
-    <SiloLayout>
-      <SiloEditForm uid={uid} />
-    </SiloLayout>
-  )
+  return <SiloViewEdit uid={uid} />
 }

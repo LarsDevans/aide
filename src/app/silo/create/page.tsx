@@ -1,10 +1,5 @@
-import SiloLayout from "@/app/silo/layout"
-import SiloCreateForm from "@/components/silo/SiloCreateForm"
+import SiloViewCreate from "@/components/silo/views/Create"
 
 export default function SiloCreatePage() {
-  return (
-    <SiloLayout>
-      <SiloCreateForm />
-    </SiloLayout>
-  )
+  return <SiloViewCreate />
 }

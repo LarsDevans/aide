@@ -3,7 +3,7 @@ import { IconButton as IconButtonType } from "@/types/ui"
 export default function IconButton({
   disabled = false,
   icon,
-  type = "button",
+  type = "submit",
   onClick,
 }: IconButtonType) {
   return (
