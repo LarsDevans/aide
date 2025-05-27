@@ -3,7 +3,7 @@
 import SiloForm from "@/components/silo/SiloForm"
 import Button from "@/components/ui/Button"
 import LoadingState from "@/components/ui/LoadingState"
-import { archive, getByUid, update } from "@/lib/silo"
+import { archive, getByUid, update } from "@/lib/silo/silo"
 import { updateSchema } from "@/lib/validation/silo"
 import { Silo, SiloFormData } from "@/types/silo"
 import Link from "next/link"

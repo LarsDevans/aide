@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore"
 import { uid } from "uid"
 
-const documentName = "silos"
+export const documentName = "silos"
 
 export async function getByUid(uid: string): Promise<Silo | null> {
   try {

@@ -3,7 +3,7 @@
 import EmptyState from "@/components/ui/EmptyState"
 import IconButton from "@/components/ui/IconButton"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { listenForByOwnerUid, unarchive } from "@/lib/silo"
+import { listenForByOwnerUid, unarchive } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
 import { ArchiveRestore } from "lucide-react"
 import Link from "next/link"
