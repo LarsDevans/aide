@@ -20,11 +20,14 @@ import {
   getMonthString,
   formatDate,
 } from "@/lib/dateHelpers";
+import { useParams } from "next/navigation";
 
 const centsToEuro = (cents: number): string =>
   (cents / 100).toLocaleString("nl-NL", { minimumFractionDigits: 2 });
 
-export default function TransactionIndex({ siloUid }: { siloUid: string }) {
+export default function TransactionIndex() {
+  const params = useParams();
+  const siloUid = params.uid as string;
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const [silo, setSilo] = useState<Silo | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>(
