@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import Select from "@/components/ui/Select";
-import { Trash2 } from "lucide-react";
+import { PencilLine, Trash2 } from "lucide-react";
 import { Transaction } from "@/types/transaction";
 import { Silo } from "@/types/silo";
 import { deleteByUid, listenForBySiloUid } from "@/lib/silo/transaction";
@@ -89,7 +89,7 @@ export default function TransactionIndex({ siloUid }: { siloUid: string }) {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6">
+    <div className="w-fit mx-auto p-6">
       <div className="mb-4 flex justify-between items-center">
         <Link className="underline" href="/silo">
           Terug naar silo overzicht
@@ -129,7 +129,7 @@ export default function TransactionIndex({ siloUid }: { siloUid: string }) {
             <TableRow>
               <TableCell header>Datum</TableCell>
               <TableCell header>EUR</TableCell>
-              <TableCell header className="text-right">Actie</TableCell>
+              <TableCell header> </TableCell>
             </TableRow>
           </TableHead>
           <tbody>
@@ -139,6 +139,7 @@ export default function TransactionIndex({ siloUid }: { siloUid: string }) {
                   key={transaction.uid}
                   transaction={transaction}
                   onDelete={handleDelete}
+                  siloUid={siloUid}
                 />
               ))
               ) : (
@@ -164,9 +165,11 @@ export default function TransactionIndex({ siloUid }: { siloUid: string }) {
 function TransactionRow({
   transaction,
   onDelete,
+  siloUid,
 }: {
   transaction: Transaction;
   onDelete: (uid: string) => void;
+  siloUid: string;
 }) {
   return (
     <TableRow>
@@ -175,6 +178,9 @@ function TransactionRow({
         {(transaction.type === "income" ? "+" : "-") + centsToEuro(transaction.amountInCents)}
       </TableCell>
       <TableCell className="text-right">
+        <Link href={`/silo/${siloUid}/transactions/${transaction.uid}/edit`}>
+          <IconButton icon={<PencilLine />} />
+        </Link>
         <IconButton icon={<Trash2 />} onClick={() => onDelete(transaction.uid)} />
       </TableCell>
     </TableRow>

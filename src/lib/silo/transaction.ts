@@ -1,6 +1,6 @@
 import { Transaction } from "@/types/transaction"
 import { FirebaseError } from "firebase/app"
-import { deleteDoc, doc, onSnapshot, query, setDoc, Unsubscribe } from "firebase/firestore"
+import { deleteDoc, doc, getDoc, onSnapshot, query, setDoc, Unsubscribe } from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "../firebase"
 import { documentName as siloDocumentName } from "./silo"
@@ -12,6 +12,43 @@ export const documentName = "transactions"
 import { collection, getDocs } from "firebase/firestore"
 
 export async function getByUid(
+  siloUid: string,
+  transactionUid: string,
+): Promise<Transaction | null> {
+  try {
+    const silo: Silo | null = await getSiloByUid(siloUid)
+    if (!silo) {
+      console.error("Silo not found")
+      return null
+    }
+    const transactionRef = doc(
+      db,
+      siloDocumentName,
+      siloUid,
+      documentName,
+      transactionUid
+    )
+    const transactionDoc = await getDoc(transactionRef)
+    if (!transactionDoc.exists()) {
+      console.error("Transaction not found")
+      return null
+    }
+    const transaction: Transaction = {
+      ...transactionDoc.data(),
+      uid: transactionDoc.id,
+    } as Transaction
+    return transaction
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
+    return null
+  }
+}
+
+export async function getBySiloUid(
   siloUid: string,
 ): Promise<Transaction[] | null> {
   try {
@@ -116,5 +153,24 @@ export async function deleteByUid(
     } else {
       console.error("Er is een onbeschrijfelijke fout opgetreden")
     }
+  }
+}
+
+export async function update(
+  siloUid: string,
+  transactionUid: string,
+  nextTransaction: Transaction,
+): Promise<Transaction | null> {
+  try {
+    const docRef = doc(db, siloDocumentName, siloUid, documentName, transactionUid)
+    await setDoc(docRef, nextTransaction)
+    return nextTransaction
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
+    return null
   }
 }
