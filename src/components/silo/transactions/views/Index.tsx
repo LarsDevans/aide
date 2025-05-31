@@ -67,8 +67,8 @@ export default function TransactionIndex({ siloUid }: { siloUid: string }) {
   const { incomeTotal, expenseTotal, balance } = useMemo(() => {
     let income = 0, expense = 0;
     for (const t of filteredTransactions) {
-      if (t.type === "income") income += t.amountInCents;
-      if (t.type === "expense") expense += t.amountInCents;
+      if (t.type === "income") income += Number(t.amountInCents);
+      if (t.type === "expense") expense += Number(t.amountInCents);
     }
     return {
       incomeTotal: income,
