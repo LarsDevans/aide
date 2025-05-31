@@ -75,15 +75,12 @@ export async function create(
     amountInCents: number
 ): Promise<Transaction | null> {
   try {
+    const date = new Date()
     const transaction: Transaction = {
         uid: uid(32),
         type,
         amountInCents,
-        date: new Date().toLocaleDateString("nl-NL", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        }),
+        date,
     }
     // transaction is collection inside the silo collection
     const siloRef = doc(db, siloDocumentName, siloUid)
