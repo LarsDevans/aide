@@ -15,8 +15,8 @@ export default function SiloViewCreate() {
   const createSilo = async (siloFormData: SiloFormData) => {
     const result = await create(
       siloFormData.name,
-      siloFormData.description,
       currentUser.uid,
+      siloFormData.description,
     )
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")

@@ -1,6 +1,6 @@
 import { Transaction } from "@/types/transaction"
 import { FirebaseError } from "firebase/app"
-import { doc, onSnapshot, query, setDoc, Unsubscribe } from "firebase/firestore"
+import { deleteDoc, doc, onSnapshot, query, setDoc, Unsubscribe } from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "../firebase"
 import { documentName as siloDocumentName } from "./silo"
@@ -42,15 +42,10 @@ export async function getByUid(
   }
 }
 
-export async function listenForBySiloUid(
+export function listenForBySiloUid(
   siloUid: string,
   callback: (transactions: Transaction[]) => void,
-): Promise<Unsubscribe> {
-  const silo: Silo | null = await getSiloByUid(siloUid)
-  if (!silo) {
-    console.error("Silo not found")
-    return () => {}
-  }
+): Unsubscribe {
   const transactionsCol = collection(
     db,
     siloDocumentName,
@@ -102,5 +97,27 @@ export async function create(
       console.error("Er is een onbeschrijfelijke fout opgetreden")
     }
     return null
+  }
+}
+
+export async function deleteByUid(
+  siloUid: string,
+  transactionUid: string
+): Promise<void> {
+  try {
+    const transactionRef = doc(
+      db,
+      siloDocumentName,
+      siloUid,
+      documentName,
+      transactionUid
+    );
+    await deleteDoc(transactionRef);
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
   }
 }

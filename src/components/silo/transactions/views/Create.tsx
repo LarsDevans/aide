@@ -36,8 +36,8 @@ export default function TransactionViewCreate() {
   return (
     <TransactionForm
       linkActions={formLinkActions}
-      submitText="Silo aanmaken"
-      title="Maak een nieuwe silo aan"
+      submitText="Transactie aanmaken"
+      title="Transactie aanmaken"
       validation={createSchema}
       submitAction={createTransaction}
     />
