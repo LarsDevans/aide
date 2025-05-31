@@ -4,7 +4,7 @@ import React, { createContext, useState, ReactNode } from "react"
 
 type SiloContextType = {
   siloUid: string | null
-  setSiloUid: (silo: string | null) => void
+  setSiloUid: (siloUid: string | null) => void
 }
 
 export const SiloContext = createContext<SiloContextType>({} as SiloContextType)
