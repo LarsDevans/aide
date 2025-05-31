@@ -1,7 +1,7 @@
 "use client"
 
 import { ReactNode } from "react"
-import LoadingState from "../ui/LoadingState"
+import LoadingState from "@/components/ui/LoadingState"
 import { useSiloAccess } from "@/hooks/useSiloAccess"
 
 export default function SiloGuard({ children }: { children: ReactNode }) {

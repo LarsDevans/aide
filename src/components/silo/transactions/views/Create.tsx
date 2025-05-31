@@ -4,7 +4,7 @@ import { create } from "@/lib/silo/transaction"
 import { TransactionFormData } from "@/types/transaction"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import TransactionForm from "../TransactionForm"
+import TransactionForm from "@/components/silo/transactions/TransactionForm"
 import { createSchema } from "@/lib/validation/transaction"
 
 export default function TransactionViewCreate() {

@@ -2,14 +2,12 @@ import { Transaction } from "@/types/transaction"
 import { FirebaseError } from "firebase/app"
 import { deleteDoc, doc, getDoc, onSnapshot, query, setDoc, Unsubscribe } from "firebase/firestore"
 import { uid } from "uid"
-import { db } from "../firebase"
-import { documentName as siloDocumentName } from "./silo"
+import { db } from "@/lib/firebase"
+import { documentName as siloDocumentName, getByUid as getSiloByUid } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
-import { getByUid as getSiloByUid } from "./silo"
+import { collection, getDocs } from "firebase/firestore"
 
 export const documentName = "transactions"
-
-import { collection, getDocs } from "firebase/firestore"
 
 export async function getByUid(
   siloUid: string,
