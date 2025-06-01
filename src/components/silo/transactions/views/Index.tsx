@@ -16,7 +16,7 @@ import { useParams } from "next/navigation"
 const centsToEuro = (cents: number): string =>
   (cents / 100).toLocaleString("nl-NL", { minimumFractionDigits: 2 })
 
-export default function TransactionIndex() {
+export default function TransactionViewIndex() {
   const params = useParams()
   const siloUid = params.uid as string
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
