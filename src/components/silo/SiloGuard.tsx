@@ -15,7 +15,9 @@ export default function SiloGuard({ children }: { children: ReactNode }) {
     )
   }
 
-  if (!exists) return null
+  if (!exists) {
+    return null
+  }
 
   return <>{children}</>
 }
