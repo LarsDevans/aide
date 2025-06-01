@@ -13,6 +13,7 @@ import IconButton from "@/components/ui/IconButton"
 import { toDate, getMonthString, formatDate } from "@/lib/helpers/date"
 import { useParams } from "next/navigation"
 import { centsToEuro } from "@/lib/helpers/currency"
+import router from "next/router"
 
 export default function TransactionViewIndex() {
   const params = useParams()
@@ -40,7 +41,7 @@ export default function TransactionViewIndex() {
       if (silo) {
         setSilo(silo)
       } else {
-        console.error("Silo not found")
+        router.push("/silo")
       }
     }
     fetchSilo()
