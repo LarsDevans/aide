@@ -5,9 +5,9 @@ import LoadingState from "@/components/ui/LoadingState"
 import { useSiloAccess } from "@/hooks/useSiloAccess"
 
 export default function SiloGuard({ children }: { children: ReactNode }) {
-  const { loading, exists } = useSiloAccess()
+  const { isLoading, siloExists } = useSiloAccess()
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex h-full min-h-screen w-full items-center justify-center">
         <LoadingState />
@@ -15,7 +15,7 @@ export default function SiloGuard({ children }: { children: ReactNode }) {
     )
   }
 
-  if (!exists) {
+  if (!siloExists) {
     return null
   }
 

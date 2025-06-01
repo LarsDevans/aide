@@ -8,14 +8,14 @@ export const useSiloAccess = () => {
   const params = useParams()
   const router = useRouter()
   const siloUid = params?.uid as string
-  const [loading, setLoading] = useState(true)
-  const [exists, setExists] = useState<boolean | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [siloExists, setSiloExists] = useState<boolean | null>(null)
 
   useEffect(() => {
     const checkSilo = async () => {
       const siloObj = await getByUid(siloUid)
-      setExists(!!siloObj)
-      setLoading(false)
+      setSiloExists(!!siloObj)
+      setIsLoading(false)
       if (!siloObj) {
         router.replace("/silo")
       } else {
@@ -25,5 +25,5 @@ export const useSiloAccess = () => {
     if (siloUid) checkSilo()
   }, [siloUid, router, setSiloUid])
 
-  return { loading, exists }
+  return { isLoading, siloExists }
 }
