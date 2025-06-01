@@ -6,13 +6,16 @@ import { getByUid, update } from "@/lib/silo/transaction"
 import { createSchema } from "@/lib/validation/transaction"
 import { Transaction, TransactionFormData } from "@/types/transaction"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export default function TransactionViewEdit() {
-  const params = useParams()
-  const siloUid = params.uid as string
-  const transactionUid = params.transactionUid as string
+export default function TransactionViewEdit({
+  siloUid,
+  transactionUid,
+}: {
+  siloUid: string
+  transactionUid: string
+}) {
   const [transaction, setTransaction] = useState<Transaction | null>(null)
   const router = useRouter()
 

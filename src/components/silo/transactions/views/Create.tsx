@@ -3,15 +3,16 @@
 import { create } from "@/lib/silo/transaction"
 import { TransactionFormData } from "@/types/transaction"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
 import TransactionForm from "@/components/silo/transactions/TransactionForm"
 import { createSchema } from "@/lib/validation/transaction"
+import { useRouter } from "next/navigation"
 
-export default function TransactionViewCreate() {
+export default function TransactionViewCreate({
+  siloUid,
+}: {
+  siloUid: string
+}) {
   const router = useRouter()
-  const params = useParams()
-  const siloUid = params?.uid as string
-
   const createTransaction = async (
     transactionFormData: TransactionFormData,
   ) => {
