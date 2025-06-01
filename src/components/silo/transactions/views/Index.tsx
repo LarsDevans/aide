@@ -54,14 +54,14 @@ export default function TransactionViewIndex() {
     }
   }, [transactions])
 
-  const filteredTransactions = useMemo(() => {
+  const transactionsForSelectedMonth = useMemo(() => {
     return (
       transactions?.filter((t) => getMonthString(t.date) === selectedMonth) ??
       []
     )
   }, [transactions, selectedMonth])
 
-  const allMonths = useMemo(() => {
+  const availableMonths = useMemo(() => {
     return [
       ...new Set((transactions ?? []).map((t) => getMonthString(t.date))),
     ].sort((a, b) => b.localeCompare(a))
@@ -70,7 +70,7 @@ export default function TransactionViewIndex() {
   const { incomeTotal, expenseTotal, balance } = useMemo(() => {
     let income = 0,
       expense = 0
-    for (const t of filteredTransactions) {
+    for (const t of transactionsForSelectedMonth) {
       if (t.type === "income") income += t.amountInCents
       if (t.type === "expense") expense += t.amountInCents
     }
@@ -79,7 +79,7 @@ export default function TransactionViewIndex() {
       expenseTotal: expense,
       balance: income - expense,
     }
-  }, [filteredTransactions])
+  }, [transactionsForSelectedMonth])
 
   const handleDelete = async (transactionUid: string) => {
     if (confirm("Weet je zeker dat je deze transactie wilt verwijderen?")) {
@@ -116,14 +116,14 @@ export default function TransactionViewIndex() {
           Transacties voor {silo?.name ?? "(naam onbekend)"}
         </h1>
 
-        {allMonths.length === 0 ? (
+        {availableMonths.length === 0 ? (
           <p className="text-sm">Geen transacties gevonden voor deze silo.</p>
         ) : (
           <Select
             name="month"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            options={allMonths.map((month) => {
+            options={availableMonths.map((month) => {
               const [year, monthNum] = month.split("-")
               return {
                 value: month,
@@ -145,8 +145,8 @@ export default function TransactionViewIndex() {
             </TableRow>
           </TableHead>
           <tbody>
-            {filteredTransactions.length > 0 ? (
-              filteredTransactions.map((transaction) => (
+            {transactionsForSelectedMonth.length > 0 ? (
+              transactionsForSelectedMonth.map((transaction) => (
                 <TransactionRow
                   key={transaction.uid}
                   transaction={transaction}
