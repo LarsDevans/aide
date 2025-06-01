@@ -10,11 +10,9 @@ import { deleteByUid, listenForBySiloUid } from "@/lib/silo/transaction"
 import { getByUid } from "@/lib/silo/silo"
 import Link from "next/link"
 import IconButton from "@/components/ui/IconButton"
-import { toDate, getMonthString, formatDate } from "@/lib/dateHelpers"
+import { toDate, getMonthString, formatDate } from "@/lib/helpers/date"
 import { useParams } from "next/navigation"
-
-const centsToEuro = (cents: number): string =>
-  (cents / 100).toLocaleString("nl-NL", { minimumFractionDigits: 2 })
+import { centsToEuro } from "@/lib/helpers/currency"
 
 export default function TransactionViewIndex() {
   const params = useParams()
