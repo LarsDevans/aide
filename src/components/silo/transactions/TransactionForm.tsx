@@ -39,7 +39,7 @@ export default function TransactionForm({
   // Note: could behave unexpectedly, but it should be safe.
   const handleInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setTransactionFormData((prev) => ({ ...prev, [name]: value }))
+    setTransactionFormData((prev) => ({ ...prev, [name]: Number(value) }))
   }
 
   const handleSelectUpdate = (e: ChangeEvent<HTMLSelectElement>) => {

@@ -30,9 +30,7 @@ export default function TransactionIndex() {
   const siloUid = params.uid as string;
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const [silo, setSilo] = useState<Silo | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<string>(
-    new Date().toISOString().slice(0, 7)
-  );
+  const [selectedMonth, setSelectedMonth] = useState<string>();
 
   useEffect(() => {
     const unsubscribe = listenForBySiloUid(
@@ -57,6 +55,13 @@ export default function TransactionIndex() {
     fetchSilo();
   }, [siloUid]);
 
+  useEffect(() => {
+    if (transactions && transactions.length > 0) {
+      const firstTransaction = transactions[0];
+      setSelectedMonth(getMonthString(firstTransaction.date));
+    }
+  }, [transactions]);
+
   const filteredTransactions = useMemo(() => {
     return (transactions?.filter((t) => getMonthString(t.date) === selectedMonth) ?? []);
   }, [transactions, selectedMonth]);
@@ -70,8 +75,8 @@ export default function TransactionIndex() {
   const { incomeTotal, expenseTotal, balance } = useMemo(() => {
     let income = 0, expense = 0;
     for (const t of filteredTransactions) {
-      if (t.type === "income") income += Number(t.amountInCents);
-      if (t.type === "expense") expense += Number(t.amountInCents);
+      if (t.type === "income") income += t.amountInCents;
+      if (t.type === "expense") expense += t.amountInCents;
     }
     return {
       incomeTotal: income,
