@@ -5,6 +5,19 @@ type TableProps = React.TableHTMLAttributes<HTMLTableElement> & {
   className?: string
 }
 
+type TableHeadProps = React.HTMLAttributes<HTMLTableSectionElement> & {
+  children: React.ReactNode
+}
+
+type TableRowProps = React.HTMLAttributes<HTMLTableRowElement> & {
+  children: React.ReactNode
+}
+
+type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement> & {
+  children: React.ReactNode
+  header?: boolean
+}
+
 export function Table({ children, className, ...props }: TableProps) {
   return (
     <table
@@ -14,10 +27,6 @@ export function Table({ children, className, ...props }: TableProps) {
       {children}
     </table>
   )
-}
-
-type TableHeadProps = React.HTMLAttributes<HTMLTableSectionElement> & {
-  children: React.ReactNode
 }
 
 export function TableHead({ children, ...props }: TableHeadProps) {
@@ -31,17 +40,8 @@ export function TableHead({ children, ...props }: TableHeadProps) {
   )
 }
 
-type TableRowProps = React.HTMLAttributes<HTMLTableRowElement> & {
-  children: React.ReactNode
-}
-
 export function TableRow({ children, ...props }: TableRowProps) {
   return <tr {...props}>{children}</tr>
-}
-
-type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement> & {
-  children: React.ReactNode
-  header?: boolean
 }
 
 export function TableCell({
