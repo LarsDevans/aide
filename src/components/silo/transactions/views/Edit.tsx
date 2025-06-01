@@ -29,11 +29,13 @@ export default function TransactionViewEdit() {
     return <LoadingState />
   }
 
-  const updateTransaction = async (transactionFormData: TransactionFormData) => {
+  const updateTransaction = async (
+    transactionFormData: TransactionFormData,
+  ) => {
     const result = await update(siloUid, transactionUid, {
       ...transaction,
       type: transactionFormData.type,
-      amountInCents: transactionFormData.amountInCents,      
+      amountInCents: transactionFormData.amountInCents,
     })
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")

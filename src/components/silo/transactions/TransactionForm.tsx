@@ -26,12 +26,13 @@ export default function TransactionForm({
   validation: z.ZodTypeAny
   submitAction: (transactionFormData: TransactionFormData) => Promise<void>
 }) {
-  const [transactionFormData, setTransactionFormData] = useState<TransactionFormData>(
-    initialFormData ?? {
+  const [transactionFormData, setTransactionFormData] =
+    useState<TransactionFormData>(
+      initialFormData ?? {
         type: "income",
         amountInCents: 0,
-    },
-  )
+      },
+    )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -91,13 +92,13 @@ export default function TransactionForm({
         onSubmit={handleFormSubmit}
       >
         <Select
-            name="type"
-            value={transactionFormData.type}
-            onChange={handleSelectUpdate}
-            options={[
-              { value: "income", label: "Inkomen" },
-              { value: "expense", label: "Uitgave" },
-            ]}
+          name="type"
+          value={transactionFormData.type}
+          onChange={handleSelectUpdate}
+          options={[
+            { value: "income", label: "Inkomen" },
+            { value: "expense", label: "Uitgave" },
+          ]}
         />
 
         <Input
