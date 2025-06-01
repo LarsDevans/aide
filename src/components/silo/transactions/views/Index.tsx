@@ -130,7 +130,7 @@ export default function TransactionViewIndex() {
                 label: `${monthNum}-${year}`,
               }
             })}
-            wFit
+            width="w-fit"
           />
         )}
       </div>

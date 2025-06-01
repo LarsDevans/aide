@@ -28,5 +28,5 @@ export interface Select {
   options: { value: string; label: string }[]
   value?: string
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void
-  wFit?: boolean
+  width?: "w-fit" | "w-full"
 }

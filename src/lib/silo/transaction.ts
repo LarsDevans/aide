@@ -26,10 +26,12 @@ export async function getByUid(
 ): Promise<Transaction | null> {
   try {
     const silo: Silo | null = await getSiloByUid(siloUid)
+
     if (!silo) {
       console.error("Silo not found")
       return null
     }
+
     const transactionRef = doc(
       db,
       siloDocumentName,
@@ -37,15 +39,18 @@ export async function getByUid(
       documentName,
       transactionUid,
     )
+
     const transactionDoc = await getDoc(transactionRef)
     if (!transactionDoc.exists()) {
       console.error("Transaction not found")
       return null
     }
+
     const transaction: Transaction = {
       ...transactionDoc.data(),
       uid: transactionDoc.id,
     } as Transaction
+
     return transaction
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
@@ -62,21 +67,26 @@ export async function getBySiloUid(
 ): Promise<Transaction[] | null> {
   try {
     const silo: Silo | null = await getSiloByUid(siloUid)
+
     if (!silo) {
       console.error("Silo not found")
       return null
     }
+
     const transactionsCol = collection(
       db,
       siloDocumentName,
       siloUid,
       documentName,
     )
+
     const snapshot = await getDocs(transactionsCol)
+
     const transactions: Transaction[] = snapshot.docs.map((doc) => ({
       ...doc.data(),
       uid: doc.id,
     })) as Transaction[]
+
     return transactions
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
@@ -98,7 +108,9 @@ export function listenForBySiloUid(
     siloUid,
     documentName,
   )
+
   const q = query(transactionsCol)
+
   const unsubscribe = onSnapshot(
     q,
     (snapshot) => {
@@ -116,6 +128,7 @@ export function listenForBySiloUid(
       }
     },
   )
+
   return unsubscribe
 }
 
@@ -126,16 +139,20 @@ export async function create(
 ): Promise<Transaction | null> {
   try {
     const date = new Date()
+
     const transaction: Transaction = {
       uid: uid(32),
       type,
       amountInCents,
       date,
     }
+
     // transaction is collection inside the silo collection
     const siloRef = doc(db, siloDocumentName, siloUid)
     const transactionRef = doc(siloRef, documentName, transaction.uid)
+
     await setDoc(transactionRef, transaction)
+
     return transaction
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
@@ -159,6 +176,7 @@ export async function deleteByUid(
       documentName,
       transactionUid,
     )
+
     await deleteDoc(transactionRef)
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
@@ -182,7 +200,9 @@ export async function update(
       documentName,
       transactionUid,
     )
+
     await setDoc(docRef, nextTransaction)
+
     return nextTransaction
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {

@@ -5,11 +5,11 @@ export default function Select({
   options,
   value = undefined,
   onChange,
-  wFit = false,
+  width = "w-full",
 }: SelectType) {
   return (
     <select
-      className={`${wFit ? "w-fit" : "w-full"} rounded border p-2`}
+      className={`${width} rounded border p-2`}
       name={name}
       value={value}
       onChange={(e) => onChange(e)}
