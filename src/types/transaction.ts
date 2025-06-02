@@ -2,7 +2,7 @@ export type Transaction = {
   uid: string
   type: "income" | "expense"
   amountInCents: number
-  date: Date
+  createdAt: Date
 }
 
 export type TransactionFormData = {

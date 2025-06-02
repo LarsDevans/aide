@@ -144,7 +144,7 @@ export async function create(
       uid: uid(32),
       type,
       amountInCents,
-      date,
+      createdAt: date,
     }
 
     // transaction is collection inside the silo collection

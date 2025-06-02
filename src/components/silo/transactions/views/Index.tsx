@@ -48,20 +48,21 @@ export default function TransactionViewIndex() {
   useEffect(() => {
     if (transactions && transactions.length > 0) {
       const firstTransaction = transactions[0]
-      setSelectedMonth(getMonthString(firstTransaction.date))
+      setSelectedMonth(getMonthString(firstTransaction.createdAt))
     }
   }, [transactions])
 
   const transactionsForSelectedMonth = useMemo(() => {
     return (
-      transactions?.filter((t) => getMonthString(t.date) === selectedMonth) ??
-      []
+      transactions?.filter(
+        (t) => getMonthString(t.createdAt) === selectedMonth,
+      ) ?? []
     )
   }, [transactions, selectedMonth])
 
   const availableMonths = useMemo(() => {
     return [
-      ...new Set((transactions ?? []).map((t) => getMonthString(t.date))),
+      ...new Set((transactions ?? []).map((t) => getMonthString(t.createdAt))),
     ].sort((a, b) => b.localeCompare(a))
   }, [transactions])
 
@@ -195,7 +196,7 @@ function TransactionRow({
 }) {
   return (
     <TableRow>
-      <TableCell>{formatDate(transaction.date)}</TableCell>
+      <TableCell>{formatDate(transaction.createdAt)}</TableCell>
       <TableCell>
         {(transaction.type === "income" ? "+" : "-") +
           centsToEuro(transaction.amountInCents)}
