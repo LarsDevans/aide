@@ -40,6 +40,9 @@ export function formatDate(date: AllowedDateInput): string {
   return `${day}-${month}-${year}`
 }
 
-export function sortByDateDesc<T extends { date: AllowedDateInput }>(a: T, b: T): number {
+export function sortByDateDesc<T extends { date: AllowedDateInput }>(
+  a: T,
+  b: T,
+): number {
   return toDate(b.date).getTime() - toDate(a.date).getTime()
 }
