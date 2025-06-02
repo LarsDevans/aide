@@ -39,3 +39,7 @@ export function formatDate(date: AllowedDateInput): string {
   const day = String(dateObj.getDate()).padStart(2, "0")
   return `${day}-${month}-${year}`
 }
+
+export function sortByDateDesc<T extends { date: AllowedDateInput }>(a: T, b: T): number {
+  return toDate(b.date).getTime() - toDate(a.date).getTime()
+}

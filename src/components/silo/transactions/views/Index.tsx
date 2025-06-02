@@ -10,7 +10,7 @@ import { deleteByUid, listenForBySiloUid } from "@/lib/silo/transaction"
 import { getByUid } from "@/lib/silo/silo"
 import Link from "next/link"
 import IconButton from "@/components/ui/IconButton"
-import { toDate, getMonthString, formatDate } from "@/lib/helpers/date"
+import { toDate, getMonthString, formatDate, sortByDateDesc } from "@/lib/helpers/date"
 import { useParams } from "next/navigation"
 import { centsToEuro } from "@/lib/helpers/currency"
 import router from "next/router"
@@ -26,9 +26,7 @@ export default function TransactionViewIndex() {
     const unsubscribe = listenForBySiloUid(
       siloUid,
       (transactions: Transaction[]) => {
-        transactions.sort(
-          (a, b) => toDate(b.date).getTime() - toDate(a.date).getTime(),
-        )
+        transactions.sort(sortByDateDesc)
         setTransactions(transactions)
       },
     )
