@@ -7,5 +7,5 @@ export type Transaction = {
 
 export type TransactionFormData = {
   type: "income" | "expense"
-  amountInCents: number
+  amountInEuros: number
 }

@@ -14,6 +14,7 @@ export interface Input {
   type: "text" | "email" | "password" | "number"
   value?: string | number | undefined
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  step?: string
 }
 
 export interface IconButton {

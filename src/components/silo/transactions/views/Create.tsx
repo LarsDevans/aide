@@ -6,6 +6,7 @@ import Link from "next/link"
 import TransactionForm from "@/components/silo/transactions/TransactionForm"
 import { createSchema } from "@/lib/validation/transaction"
 import { useRouter } from "next/navigation"
+import { euroToCents } from "@/lib/helpers/currency"
 
 export default function TransactionViewCreate({
   siloUid,
@@ -13,17 +14,22 @@ export default function TransactionViewCreate({
   siloUid: string
 }) {
   const router = useRouter()
+  
   const createTransaction = async (
     transactionFormData: TransactionFormData,
   ) => {
+    const amountInCents = euroToCents(transactionFormData.amountInEuros)
+
     const result = await create(
       siloUid,
       transactionFormData.type,
-      transactionFormData.amountInCents,
+      amountInCents,
     )
+
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")
     }
+
     router.push(`/silo/${siloUid}/transactions`)
   }
 

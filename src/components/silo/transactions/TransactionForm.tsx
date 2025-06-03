@@ -30,7 +30,7 @@ export default function TransactionForm({
     useState<TransactionFormData>(
       initialFormData ?? {
         type: "income",
-        amountInCents: 0,
+        amountInEuros: 0,
       },
     )
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -102,10 +102,11 @@ export default function TransactionForm({
         />
 
         <Input
-          name="amountInCents"
-          placeholder="Bedrag in eurocenten"
+          name="amountInEuros"
+          placeholder="Prijs in euros"
           type="number"
-          value={transactionFormData.amountInCents}
+          step="0.01"
+          value={transactionFormData.amountInEuros === 0 ? "" : transactionFormData.amountInEuros}
           onChange={handleInputUpdate}
         />
 

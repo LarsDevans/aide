@@ -6,6 +6,7 @@ export default function Input({
   type,
   value = undefined,
   onChange,
+  step = "1",
 }: InputType) {
   return (
     <input
@@ -14,6 +15,7 @@ export default function Input({
       placeholder={placeholder}
       type={type}
       value={value}
+      step={step}
       onChange={(e) => onChange(e)}
     />
   )

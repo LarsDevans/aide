@@ -4,7 +4,7 @@ export const createSchema = z.object({
   type: z.enum(["income", "expense"], {
     errorMap: () => ({ message: "Kies een type" }),
   }),
-  amountInCents: z.number().int().positive({
+  amountInEuros: z.number().positive({
     message: "Voer een positief bedrag in",
   }),
 })
@@ -12,7 +12,7 @@ export const updateSchema = z.object({
   type: z.enum(["income", "expense"], {
     errorMap: () => ({ message: "Kies een type" }),
   }),
-  amountInCents: z.number().int().positive({
+  amountInEuros: z.number().positive({
     message: "Voer een positief bedrag in",
   }),
 })

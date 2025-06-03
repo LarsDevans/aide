@@ -38,7 +38,7 @@ export default function TransactionViewEdit({
     const result = await update(siloUid, transactionUid, {
       ...transaction,
       type: transactionFormData.type,
-      amountInCents: transactionFormData.amountInCents,
+      amountInCents: transactionFormData.amountInEuros,
     })
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")
@@ -60,7 +60,7 @@ export default function TransactionViewEdit({
       linkActions={formLinkActions}
       initialFormData={{
         type: transaction.type,
-        amountInCents: transaction.amountInCents,
+        amountInEuros: transaction.amountInCents,
       }}
       submitText="Transactie aanpassen"
       title="Transactie aanpassen"
