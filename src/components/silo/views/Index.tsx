@@ -3,7 +3,7 @@
 import SiloCtaCreate from "@/components/silo/cta/Create"
 import EmptyState from "@/components/ui/EmptyState"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { listenForByOwnerUid } from "@/lib/silo"
+import { listenForByOwnerUid } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
 import { PencilLine } from "lucide-react"
 import Link from "next/link"
@@ -35,12 +35,15 @@ export default function SiloViewIndex() {
                 key={silo.uid}
                 className="flex items-center justify-between rounded border p-2"
               >
-                <div>
+                <Link
+                  href={`/silo/${silo.uid}/transactions`}
+                  className="w-full flex-1"
+                >
                   <p className="font-bold">{silo.name}</p>
                   {silo.description && (
                     <p className="italic">{silo.description}</p>
                   )}
-                </div>
+                </Link>
                 <Link
                   className="px-2"
                   href={`/silo/edit/${silo.uid}`}

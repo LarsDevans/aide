@@ -2,7 +2,7 @@
 
 import SiloForm from "@/components/silo/SiloForm"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { create } from "@/lib/silo"
+import { create } from "@/lib/silo/silo"
 import { createSchema } from "@/lib/validation/silo"
 import { SiloFormData } from "@/types/silo"
 import Link from "next/link"
@@ -15,8 +15,8 @@ export default function SiloViewCreate() {
   const createSilo = async (siloFormData: SiloFormData) => {
     const result = await create(
       siloFormData.name,
-      siloFormData.description,
       currentUser.uid,
+      siloFormData.description,
     )
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")

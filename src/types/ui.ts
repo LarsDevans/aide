@@ -11,9 +11,10 @@ export interface Button {
 export interface Input {
   name: string
   placeholder: string
-  type: "text" | "email" | "password"
-  value?: string | undefined
+  type: "text" | "email" | "password" | "number"
+  value?: string | number | undefined
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  step?: string
 }
 
 export interface IconButton {
@@ -21,4 +22,12 @@ export interface IconButton {
   icon: ReactNode
   type?: "button" | "submit"
   onClick?: (e: FormEvent<HTMLButtonElement>) => void
+}
+
+export interface Select {
+  name: string
+  options: { value: string; label: string }[]
+  value?: string
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void
+  width?: "w-fit" | "w-full"
 }
