@@ -106,7 +106,11 @@ export default function TransactionForm({
           placeholder="Prijs in euros"
           type="number"
           step="0.01"
-          value={transactionFormData.amountInEuros === 0 ? "" : transactionFormData.amountInEuros}
+          value={
+            transactionFormData.amountInEuros === 0
+              ? ""
+              : transactionFormData.amountInEuros
+          }
           onChange={handleInputUpdate}
         />
 

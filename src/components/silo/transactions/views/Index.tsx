@@ -61,9 +61,17 @@ export default function TransactionViewIndex() {
   }, [transactions, selectedMonth])
 
   const availableMonths = useMemo(() => {
-    return [
+    const months = [
       ...new Set((transactions ?? []).map((t) => getMonthString(t.createdAt))),
-    ].sort((a, b) => b.localeCompare(a))
+    ]
+
+    const currentMonth = getMonthString(new Date().toISOString())
+
+    if (months.length === 0) {
+      return [currentMonth]
+    }
+
+    return months.sort((a, b) => b.localeCompare(a))
   }, [transactions])
 
   const { incomeTotal, expenseTotal, balance } = useMemo(() => {
@@ -115,23 +123,19 @@ export default function TransactionViewIndex() {
           Transacties voor {silo?.name ?? "(naam onbekend)"}
         </h1>
 
-        {availableMonths.length === 0 ? (
-          <p className="text-sm">Geen transacties gevonden voor deze silo.</p>
-        ) : (
-          <Select
-            name="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            options={availableMonths.map((month) => {
-              const [year, monthNum] = month.split("-")
-              return {
-                value: month,
-                label: `${monthNum}-${year}`,
-              }
-            })}
-            width="w-fit"
-          />
-        )}
+        <Select
+          name="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          options={availableMonths.map((month) => {
+            const [year, monthNum] = month.split("-")
+            return {
+              value: month,
+              label: `${monthNum}-${year}`,
+            }
+          })}
+          width="w-fit"
+        />
       </div>
 
       <div className="rounded-lg border">

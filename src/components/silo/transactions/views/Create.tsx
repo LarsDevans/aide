@@ -14,7 +14,7 @@ export default function TransactionViewCreate({
   siloUid: string
 }) {
   const router = useRouter()
-  
+
   const createTransaction = async (
     transactionFormData: TransactionFormData,
   ) => {
