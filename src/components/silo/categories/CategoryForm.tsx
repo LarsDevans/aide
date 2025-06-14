@@ -123,7 +123,11 @@ export default function CategoryForm({
           name="endDate"
           placeholder="Einddatum (optioneel)"
           type="date"
-          value={categoryFormData.endDate ? categoryFormData.endDate.toISOString().split("T")[0] : ""}
+          value={
+            categoryFormData.endDate
+              ? categoryFormData.endDate.toISOString().split("T")[0]
+              : ""
+          }
           onChange={handleDateInputUpdate}
         />
 

@@ -102,7 +102,7 @@ export default function TransactionViewIndex() {
   }
 
   return (
-    <div className="mx-auto w-fit p-6 grid grid-cols-2 gap-8">
+    <div className="mx-auto grid w-fit grid-cols-2 gap-8 p-6">
       {/* Linker kolom: transacties */}
       <div className="mx-auto p-6">
         <div className="mb-4 flex items-center justify-between">
@@ -189,7 +189,7 @@ export default function TransactionViewIndex() {
         </div>
       </div>
 
-      <div className="flex items-center mx-auto p-6">
+      <div className="mx-auto flex items-center p-6">
         <Link
           href={`/silo/${siloUid}/categories/create`}
           className="underline"

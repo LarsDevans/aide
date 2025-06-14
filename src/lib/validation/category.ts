@@ -7,4 +7,18 @@ export const createSchema = z.object({
   budgetedAmountInEuros: z.number().positive({
     message: "Voer een positief bedrag in",
   }),
+  endDate: z
+    .date()
+    .optional()
+    .nullable()
+    .refine(
+      (date) => {
+        if (!date) return true
+        const today = new Date()
+        return date > today
+      },
+      {
+        message: "De einddatum moet in de toekomst liggen",
+      },
+    ),
 })
