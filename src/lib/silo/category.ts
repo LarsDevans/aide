@@ -26,9 +26,9 @@ export async function create(
 
     // categories is collection inside the silo collection
     const siloRef = doc(db, siloDocumentName, siloUid)
-    const transactionRef = doc(siloRef, documentName, category.uid)
+    const categoryRef = doc(siloRef, documentName, category.uid)
 
-    await setDoc(transactionRef, category)
+    await setDoc(categoryRef, category)
 
     return category
   } catch (error: unknown) {
