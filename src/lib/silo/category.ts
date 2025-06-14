@@ -11,12 +11,17 @@ export async function create(
   siloUid: string,
   name: string,
   budgetedAmountInCents: number,
+  endDate?: Date | null,
 ): Promise<Category | null> {
   try {
     const category: Category = {
       uid: uid(32),
       name,
       budgetedAmountInCents,
+    }
+
+    if (endDate) {
+      category.endDate = endDate
     }
 
     // categories is collection inside the silo collection

@@ -29,6 +29,7 @@ export default function CategoryForm({
     initialFormData ?? {
       name: "",
       budgetedAmountInEuros: 0,
+      endDate: null,
     },
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -44,6 +45,14 @@ export default function CategoryForm({
   const handleNumberInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setCategoryFormData((prev) => ({ ...prev, [name]: Number(value) }))
+  }
+
+  const handleDateInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setCategoryFormData((prev) => ({
+      ...prev,
+      [name]: value ? new Date(value) : null,
+    }))
   }
 
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -108,6 +117,14 @@ export default function CategoryForm({
               : categoryFormData.budgetedAmountInEuros
           }
           onChange={handleNumberInputUpdate}
+        />
+
+        <Input
+          name="endDate"
+          placeholder="Einddatum (optioneel)"
+          type="date"
+          value={categoryFormData.endDate ? categoryFormData.endDate.toISOString().split("T")[0] : ""}
+          onChange={handleDateInputUpdate}
         />
 
         <div

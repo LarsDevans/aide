@@ -20,6 +20,7 @@ export default function CategoryViewCreate({ siloUid }: { siloUid: string }) {
       siloUid,
       categoryFormData.name,
       budgetedAmountInCents,
+      categoryFormData.endDate,
     )
 
     if (result === null) {
