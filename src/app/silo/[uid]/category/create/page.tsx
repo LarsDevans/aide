@@ -1,4 +1,4 @@
-import CategoryViewCreate from "@/components/silo/categories/views/Create"
+import CategoryViewCreate from "@/components/silo/category/views/Create"
 
 export default async function CategoryCreatePage({
   params,

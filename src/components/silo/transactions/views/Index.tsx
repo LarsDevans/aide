@@ -103,7 +103,6 @@ export default function TransactionViewIndex() {
 
   return (
     <div className="mx-auto grid w-fit grid-cols-2 gap-8 p-6">
-      {/* Linker kolom: transacties */}
       <div className="mx-auto p-6">
         <div className="mb-4 flex items-center justify-between">
           <Link
@@ -191,7 +190,7 @@ export default function TransactionViewIndex() {
 
       <div className="mx-auto flex items-center p-6">
         <Link
-          href={`/silo/${siloUid}/categories/create`}
+          href={`/silo/${siloUid}/category/create`}
           className="underline"
         >
           Voeg categorie toe

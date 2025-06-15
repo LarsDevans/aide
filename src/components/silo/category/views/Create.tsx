@@ -6,7 +6,7 @@ import { createSchema } from "@/lib/validation/category"
 import { useRouter } from "next/navigation"
 import { CategoryFormData } from "@/types/category"
 import { euroToCents } from "@/lib/helpers/currency"
-import CategoryForm from "@/components/silo/categories/CategoryForm"
+import CategoryForm from "@/components/silo/category/CategoryForm"
 
 export default function CategoryViewCreate({ siloUid }: { siloUid: string }) {
   const router = useRouter()
