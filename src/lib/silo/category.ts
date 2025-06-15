@@ -6,6 +6,7 @@ import {
   query,
   setDoc,
   Unsubscribe,
+  getDoc,
 } from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "../firebase"
@@ -75,4 +76,28 @@ export function listenForBySiloUid(
   )
 
   return unsubscribe
+}
+
+export async function getByUid(
+  siloUid: string,
+  categoryUid: string,
+): Promise<Category | null> {
+  try {
+    const siloRef = doc(db, siloDocumentName, siloUid)
+    const categoryRef = doc(siloRef, documentName, categoryUid)
+    const docSnap = await getDoc(categoryRef)
+
+    if (docSnap.exists()) {
+      return { ...docSnap.data(), uid: docSnap.id } as Category
+    } else {
+      return null
+    }
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
+    return null
+  }
 }
