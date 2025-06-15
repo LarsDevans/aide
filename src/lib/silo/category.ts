@@ -24,7 +24,7 @@ export async function create(
       category.endDate = endDate
     }
 
-    // categories is collection inside the silo collection
+    // Categories is a subcollection of silo
     const siloRef = doc(db, siloDocumentName, siloUid)
     const categoryRef = doc(siloRef, documentName, category.uid)
 
