@@ -1,5 +1,12 @@
 import { Category } from "@/types/category"
-import { doc, setDoc } from "firebase/firestore"
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  setDoc,
+  Unsubscribe,
+} from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "../firebase"
 import { documentName as siloDocumentName } from "@/lib/silo/silo"
@@ -39,4 +46,33 @@ export async function create(
     }
     return null
   }
+}
+
+export function listenForBySiloUid(
+  siloUid: string,
+  callback: (categories: Category[]) => void,
+): Unsubscribe {
+  const categoryCol = collection(db, siloDocumentName, siloUid, documentName)
+
+  const q = query(categoryCol)
+
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      const categories: Category[] = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        uid: doc.id,
+      })) as Category[]
+      callback(categories)
+    },
+    (error) => {
+      if (error instanceof FirebaseError) {
+        console.error("Firebase foutmelding, details in console:", error.code)
+      } else {
+        console.error("Er is een onbeschrijfelijke fout opgetreden")
+      }
+    },
+  )
+
+  return unsubscribe
 }
