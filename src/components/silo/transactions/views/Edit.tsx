@@ -39,6 +39,7 @@ export default function TransactionViewEdit({
       ...transaction,
       type: transactionFormData.type,
       amountInCents: transactionFormData.amountInEuros,
+      categoryUid: transactionFormData.categoryUid,
     })
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")
@@ -61,6 +62,7 @@ export default function TransactionViewEdit({
       initialFormData={{
         type: transaction.type,
         amountInEuros: transaction.amountInCents,
+        categoryUid: transaction.categoryUid ?? undefined,
       }}
       submitText="Transactie aanpassen"
       title="Transactie aanpassen"

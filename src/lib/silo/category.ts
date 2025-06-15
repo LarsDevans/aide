@@ -1,5 +1,13 @@
 import { Category } from "@/types/category"
-import { doc, setDoc } from "firebase/firestore"
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  setDoc,
+  Unsubscribe,
+  getDoc,
+} from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "../firebase"
 import { documentName as siloDocumentName } from "@/lib/silo/silo"
@@ -31,6 +39,59 @@ export async function create(
     await setDoc(categoryRef, category)
 
     return category
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
+    return null
+  }
+}
+
+export function listenForBySiloUid(
+  siloUid: string,
+  callback: (categories: Category[]) => void,
+): Unsubscribe {
+  const categoryCol = collection(db, siloDocumentName, siloUid, documentName)
+
+  const q = query(categoryCol)
+
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      const categories: Category[] = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        uid: doc.id,
+      })) as Category[]
+      callback(categories)
+    },
+    (error) => {
+      if (error instanceof FirebaseError) {
+        console.error("Firebase foutmelding, details in console:", error.code)
+      } else {
+        console.error("Er is een onbeschrijfelijke fout opgetreden")
+      }
+    },
+  )
+
+  return unsubscribe
+}
+
+export async function getByUid(
+  siloUid: string,
+  categoryUid: string,
+): Promise<Category | null> {
+  try {
+    const siloRef = doc(db, siloDocumentName, siloUid)
+    const categoryRef = doc(siloRef, documentName, categoryUid)
+    const docSnap = await getDoc(categoryRef)
+
+    if (docSnap.exists()) {
+      return { ...docSnap.data(), uid: docSnap.id } as Category
+    } else {
+      return null
+    }
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
       console.error("Firebase foutmelding, details in console:", error.code)

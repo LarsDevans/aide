@@ -3,9 +3,11 @@ export type Transaction = {
   type: "income" | "expense"
   amountInCents: number
   createdAt: Date
+  categoryUid?: string
 }
 
 export type TransactionFormData = {
   type: "income" | "expense"
   amountInEuros: number
+  categoryUid?: string
 }

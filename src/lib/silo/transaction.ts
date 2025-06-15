@@ -136,6 +136,7 @@ export async function create(
   siloUid: string,
   type: "income" | "expense",
   amountInCents: number,
+  categoryUid?: string,
 ): Promise<Transaction | null> {
   try {
     const date = new Date()
@@ -145,6 +146,10 @@ export async function create(
       type,
       amountInCents,
       createdAt: date,
+    }
+
+    if (categoryUid) {
+      transaction.categoryUid = categoryUid
     }
 
     // transaction is collection inside the silo collection
@@ -201,7 +206,12 @@ export async function update(
       transactionUid,
     )
 
-    await setDoc(docRef, nextTransaction)
+    const transactionToSave = { ...nextTransaction }
+    if (transactionToSave.categoryUid === undefined) {
+      delete transactionToSave.categoryUid
+    }
+
+    await setDoc(docRef, transactionToSave)
 
     return nextTransaction
   } catch (error: unknown) {

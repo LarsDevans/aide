@@ -24,6 +24,7 @@ export default function TransactionViewCreate({
       siloUid,
       transactionFormData.type,
       amountInCents,
+      transactionFormData.categoryUid,
     )
 
     if (result === null) {

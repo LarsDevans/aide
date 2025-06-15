@@ -4,9 +4,13 @@
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
 import Select from "@/components/ui/Select"
+import { listenForBySiloUid } from "@/lib/silo/category"
+import { Category } from "@/types/category"
 import { TransactionFormData } from "@/types/transaction"
 import clsx from "clsx"
-import { ChangeEvent, FormEvent, ReactNode, useState } from "react"
+import React from "react"
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from "react"
+import { useParams } from "next/navigation"
 import { z } from "zod"
 
 export default function TransactionForm({
@@ -31,11 +35,25 @@ export default function TransactionForm({
       initialFormData ?? {
         type: "income",
         amountInEuros: 0,
+        categoryUid: undefined,
       },
     )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const params = useParams()
+  const siloUid = params.uid as string
+  const [categories, setCategories] = useState<Category[]>([])
+
+  useEffect(() => {
+    const unsubscribe = listenForBySiloUid(
+      siloUid,
+      (categories: Category[]) => {
+        setCategories(categories)
+      },
+    )
+    return () => unsubscribe()
+  }, [siloUid])
 
   // Note: could behave unexpectedly, but it should be safe.
   const handleInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +63,10 @@ export default function TransactionForm({
 
   const handleSelectUpdate = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
-    setTransactionFormData((prev) => ({ ...prev, [name]: value }))
+    setTransactionFormData((prev) => ({
+      ...prev,
+      [name]: value === "" ? undefined : value,
+    }))
   }
 
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -112,6 +133,18 @@ export default function TransactionForm({
               : transactionFormData.amountInEuros
           }
           onChange={handleInputUpdate}
+        />
+
+        <Select
+          name="categoryUid"
+          value={transactionFormData.categoryUid}
+          onChange={handleSelectUpdate}
+          options={categories.map((category) => ({
+            value: category.uid,
+            label: category.name,
+          }))}
+          placeholder="Selecteer een categorie (optioneel)"
+          allowClear
         />
 
         <div

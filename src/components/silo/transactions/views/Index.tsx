@@ -14,6 +14,8 @@ import { getMonthString, formatDate, sortByDateDesc } from "@/lib/helpers/date"
 import { useParams } from "next/navigation"
 import { centsToEuro } from "@/lib/helpers/currency"
 import router from "next/router"
+import { Category } from "@/types/category"
+import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 
 export default function TransactionViewIndex() {
   const params = useParams()
@@ -145,6 +147,7 @@ export default function TransactionViewIndex() {
               <TableRow>
                 <TableCell header>Datum</TableCell>
                 <TableCell header>EUR</TableCell>
+                <TableCell header>Categorie</TableCell>
                 <TableCell header> </TableCell>
               </TableRow>
             </TableHead>
@@ -161,7 +164,7 @@ export default function TransactionViewIndex() {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={3}
+                    colSpan={4}
                     className="text-center"
                   >
                     Geen transacties gevonden voor deze maand.
@@ -209,6 +212,19 @@ function TransactionRow({
   onDelete: (uid: string) => void
   siloUid: string
 }) {
+  const [category, setCategory] = useState<Category | null>(null)
+  useEffect(() => {
+    if (transaction.categoryUid) {
+      getCategoryByUid(siloUid, transaction.categoryUid)
+        .then((category) => {
+          setCategory(category)
+        })
+        .catch((error) => {
+          console.error("Fout bij het ophalen van categorie:", error)
+        })
+    }
+  }, [siloUid, transaction.categoryUid])
+
   return (
     <TableRow>
       <TableCell>{formatDate(transaction.createdAt)}</TableCell>
@@ -216,6 +232,7 @@ function TransactionRow({
         {(transaction.type === "income" ? "+" : "-") +
           centsToEuro(transaction.amountInCents)}
       </TableCell>
+      <TableCell>{category ? category.name : "Geen categorie"}</TableCell>
       <TableCell className="text-right">
         <Link href={`/silo/${siloUid}/transactions/${transaction.uid}/edit`}>
           <IconButton icon={<PencilLine />} />

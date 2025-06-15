@@ -30,4 +30,6 @@ export interface Select {
   value?: string
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void
   width?: "w-fit" | "w-full"
+  placeholder?: string
+  allowClear?: boolean
 }
