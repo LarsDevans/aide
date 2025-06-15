@@ -16,7 +16,6 @@ import { centsToEuro } from "@/lib/helpers/currency"
 import router from "next/router"
 import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
-import { get } from "http"
 
 export default function TransactionViewIndex() {
   const params = useParams()
@@ -233,9 +232,7 @@ function TransactionRow({
         {(transaction.type === "income" ? "+" : "-") +
           centsToEuro(transaction.amountInCents)}
       </TableCell>
-      <TableCell>
-        {category ? category.name : "Geen categorie"}
-      </TableCell>
+      <TableCell>{category ? category.name : "Geen categorie"}</TableCell>
       <TableCell className="text-right">
         <Link href={`/silo/${siloUid}/transactions/${transaction.uid}/edit`}>
           <IconButton icon={<PencilLine />} />
