@@ -32,12 +32,22 @@ export function getMonthString(date: AllowedDateInput): string {
   return `${year}-${month}`
 }
 
-export function formatDate(date: AllowedDateInput): string {
+function getDateParts(date: AllowedDateInput): { year: string; month: string; day: string } {
   const dateObj = toDate(date)
-  const year = dateObj.getFullYear()
+  const year = String(dateObj.getFullYear())
   const month = String(dateObj.getMonth() + 1).padStart(2, "0")
   const day = String(dateObj.getDate()).padStart(2, "0")
+  return { year, month, day }
+}
+
+export function formatDate(date: AllowedDateInput): string {
+  const { year, month, day } = getDateParts(date)
   return `${day}-${month}-${year}`
+}
+
+export function formatDateForInput(date: AllowedDateInput): string {
+  const { year, month, day } = getDateParts(date)
+  return `${year}-${month}-${day}`
 }
 
 export function sortByDateDesc<T extends { createdAt: AllowedDateInput }>(

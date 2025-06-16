@@ -88,19 +88,23 @@ function CategoryCard({
   }
 
   return (
-    <div className="space-y-2 rounded-lg border p-4">
-      <h3 className="text-md font-semibold">{category.name}</h3>
-      <p className="text-sm">
-        EUR {centsToCurrency(spent)} / EUR {centsToCurrency(budgeted)}
-      </p>
-      {category.endDate && (
-        <p className="text-sm">Einddatum: {formatDate(category.endDate)}</p>
-      )}
-      <p className={`rounded px-2 py-1 text-sm font-semibold ${statusColor}`}>
-        {remaining < 0
-          ? `Budget overschreden met EUR ${centsToCurrency(Math.abs(remaining))}`
-          : `Nog EUR ${centsToCurrency(remaining)} beschikbaar`}
-      </p>
-    </div>
+    <Link href={`/silo/${siloUid}/category/${category.uid}/edit`}>
+      <div className="rounded-lg border p-4 h-full flex flex-col justify-between space-y-2">
+        <div>
+          <h3 className="text-md font-semibold">{category.name}</h3>
+          <p className="text-sm">
+            EUR {centsToCurrency(spent)} / EUR {centsToCurrency(budgeted)}
+          </p>
+          {category.endDate && (
+            <p className="text-sm">Einddatum: {formatDate(category.endDate)}</p>
+          )}
+        </div>
+        <p className={`rounded px-2 py-1 text-sm font-semibold ${statusColor}`}>
+          {remaining < 0
+            ? `Budget overschreden met EUR ${centsToCurrency(Math.abs(remaining))}`
+            : `Nog EUR ${centsToCurrency(remaining)} beschikbaar`}
+        </p>
+      </div>
+    </Link>
   )
 }
