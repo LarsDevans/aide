@@ -35,14 +35,16 @@ export default function CategoryViewEdit({
     return <LoadingState />
   }
 
-  const updateCategory = async (
-    categoryFormData: CategoryFormData,
-  ) => {
+  const updateCategory = async (categoryFormData: CategoryFormData) => {
     const result = await update(siloUid, categoryUid, {
       ...category,
       name: categoryFormData.name,
-      budgetedAmountInCents: euroToCents(categoryFormData.budgetedAmountInEuros),
-      endDate: categoryFormData.endDate ? new Date(categoryFormData.endDate) : null,
+      budgetedAmountInCents: euroToCents(
+        categoryFormData.budgetedAmountInEuros,
+      ),
+      endDate: categoryFormData.endDate
+        ? new Date(categoryFormData.endDate)
+        : null,
     })
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")
@@ -84,7 +86,9 @@ export default function CategoryViewEdit({
       linkActions={formLinkActions}
       initialFormData={{
         name: category.name,
-        budgetedAmountInEuros: convertCentsToEuros(category.budgetedAmountInCents),
+        budgetedAmountInEuros: convertCentsToEuros(
+          category.budgetedAmountInCents,
+        ),
         endDate: category.endDate ?? null,
       }}
       submitText="Transactie aanpassen"

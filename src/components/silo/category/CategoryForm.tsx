@@ -120,9 +120,7 @@ export default function CategoryForm({
           onChange={handleNumberInputUpdate}
         />
 
-        <label className="text-left">
-          Einddatum (optioneel):
-        </label>
+        <label className="text-left">Einddatum (optioneel):</label>
         <Input
           name="endDate"
           placeholder="Einddatum (optioneel)"

@@ -32,7 +32,11 @@ export function getMonthString(date: AllowedDateInput): string {
   return `${year}-${month}`
 }
 
-function getDateParts(date: AllowedDateInput): { year: string; month: string; day: string } {
+function getDateParts(date: AllowedDateInput): {
+  year: string
+  month: string
+  day: string
+} {
   const dateObj = toDate(date)
   const year = String(dateObj.getFullYear())
   const month = String(dateObj.getMonth() + 1).padStart(2, "0")

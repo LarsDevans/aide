@@ -89,7 +89,7 @@ function CategoryCard({
 
   return (
     <Link href={`/silo/${siloUid}/category/${category.uid}/edit`}>
-      <div className="rounded-lg border p-4 h-full flex flex-col justify-between space-y-2">
+      <div className="flex h-full flex-col justify-between space-y-2 rounded-lg border p-4">
         <div>
           <h3 className="text-md font-semibold">{category.name}</h3>
           <p className="text-sm">

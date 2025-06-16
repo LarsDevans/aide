@@ -136,7 +136,7 @@ export async function deleteByUid(
       documentName,
       categoryUid,
     )
-    
+
     await deleteDoc(categoryRef)
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
