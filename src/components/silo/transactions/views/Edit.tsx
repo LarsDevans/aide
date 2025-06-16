@@ -2,7 +2,7 @@
 
 import TransactionForm from "@/components/silo/transactions/TransactionForm"
 import LoadingState from "@/components/ui/LoadingState"
-import { centsToEuro, euroToCents } from "@/lib/helpers/currency"
+import { convertCentsToEuros, euroToCents } from "@/lib/helpers/currency"
 import { getByUid, update } from "@/lib/silo/transaction"
 import { createSchema } from "@/lib/validation/transaction"
 import { Transaction, TransactionFormData } from "@/types/transaction"
@@ -62,7 +62,7 @@ export default function TransactionViewEdit({
       linkActions={formLinkActions}
       initialFormData={{
         type: transaction.type,
-        amountInEuros: centsToEuro(transaction.amountInCents),
+        amountInEuros: convertCentsToEuros(transaction.amountInCents),
         categoryUid: transaction.categoryUid ?? undefined,
       }}
       submitText="Transactie aanpassen"
