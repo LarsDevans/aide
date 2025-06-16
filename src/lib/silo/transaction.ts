@@ -223,3 +223,23 @@ export async function update(
     return null
   }
 }
+
+// TODO: Je kan ook bij income dat dat bij het budget hoort
+export async function getByCategoryUid(
+  siloUid: string,
+  categoryUid: string,
+): Promise<Transaction[]> {
+  const transactions = await getBySiloUid(siloUid)
+  if (!transactions) return []
+  return transactions.filter(
+    (t) => t.categoryUid === categoryUid && t.type === "expense",
+  )
+}
+
+export async function getCategoryExpenseTotalCents(
+  siloUid: string,
+  categoryUid: string,
+): Promise<number> {
+  const transactions = await getByCategoryUid(siloUid, categoryUid)
+  return transactions.reduce((sum, t) => sum + t.amountInCents, 0)
+}
