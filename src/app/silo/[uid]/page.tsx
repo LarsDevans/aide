@@ -1,4 +1,4 @@
-import SiloOverview from "@/components/silo/views/Overview";
+import SiloOverview from "@/components/silo/views/Overview"
 
 export default async function SiloOverviewPage({
   params,

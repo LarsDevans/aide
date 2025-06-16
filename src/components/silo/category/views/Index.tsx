@@ -2,7 +2,7 @@
 
 import { centsToCurrency } from "@/lib/helpers/currency"
 import { formatDate } from "@/lib/helpers/date"
-import { getCategoryExpenseTotalCents } from "@/lib/silo/transaction"
+import { getCategoryBalanceInCents } from "@/lib/silo/transaction"
 import { Category } from "@/types/category"
 import { useEffect, useState } from "react"
 import { listenForBySiloUid as listenForCategories } from "@/lib/silo/category"
@@ -20,7 +20,7 @@ export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
 
   useEffect(() => {
     const unsubscribe = listenForTransactions(siloUid, () =>
-      setTransactionsVersion((v) => v + 1)
+      setTransactionsVersion((v) => v + 1),
     )
     return unsubscribe
   }, [siloUid])
@@ -68,10 +68,10 @@ function CategoryCard({
 
   useEffect(() => {
     if (!category.uid) return
-    getCategoryExpenseTotalCents(siloUid, category.uid)
+    getCategoryBalanceInCents(siloUid, category.uid)
       .then(setTotalExpense)
       .catch((error) =>
-        console.error("Fout bij het ophalen van totale uitgaven:", error)
+        console.error("Fout bij het ophalen van totale uitgaven:", error),
       )
   }, [category.uid, siloUid, transactionsVersion])
 
