@@ -8,27 +8,21 @@ import { Transaction } from "@/types/transaction"
 import { Silo } from "@/types/silo"
 import {
   deleteByUid,
-  getCategoryExpenseTotalCents,
   listenForBySiloUid as listenForTransactionsBySiloUid,
 } from "@/lib/silo/transaction"
-import { listenForBySiloUid as listenForCategoriesBySiloUid } from "@/lib/silo/category"
 import { getByUid } from "@/lib/silo/silo"
 import Link from "next/link"
 import IconButton from "@/components/ui/IconButton"
 import { getMonthString, formatDate, sortByDateDesc } from "@/lib/helpers/date"
-import { useParams } from "next/navigation"
 import { centsToCurrency } from "@/lib/helpers/currency"
 import router from "next/router"
 import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 
-export default function TransactionViewIndex() {
-  const params = useParams()
-  const siloUid = params.uid as string
+export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
   const [silo, setSilo] = useState<Silo | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<string>()
-  const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
     const unsubscribe = listenForTransactionsBySiloUid(
@@ -51,16 +45,6 @@ export default function TransactionViewIndex() {
       }
     }
     fetchSilo()
-  }, [siloUid])
-
-  useEffect(() => {
-    const unsubscribe = listenForCategoriesBySiloUid(
-      siloUid,
-      (categories: Category[]) => {
-        setCategories(categories)
-      },
-    )
-    return () => unsubscribe()
   }, [siloUid])
 
   useEffect(() => {
@@ -120,188 +104,90 @@ export default function TransactionViewIndex() {
   }
 
   return (
-    <div className="mx-auto grid w-fit grid-cols-2 gap-8 p-6">
-      <div className="mx-auto p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <Link
-            className="underline"
-            href="/silo"
-          >
-            Terug naar silo overzicht
-          </Link>
-          <Link
-            className="underline"
-            href={`/silo/${siloUid}/transactions/create`}
-          >
-            Nieuwe transactie aanmaken
-          </Link>
-        </div>
-
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-center text-xl font-bold">
-            Transacties voor {silo?.name ?? "(naam onbekend)"}
-          </h1>
-
-          <Select
-            name="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            options={availableMonths.map((month) => {
-              const [year, monthNum] = month.split("-")
-              return {
-                value: month,
-                label: `${monthNum}-${year}`,
-              }
-            })}
-            width="w-fit"
-          />
-        </div>
-
-        <div className="rounded-lg border">
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell header>Datum</TableCell>
-                <TableCell header>EUR</TableCell>
-                <TableCell header>Categorie</TableCell>
-                <TableCell header> </TableCell>
-              </TableRow>
-            </TableHead>
-            <tbody>
-              {transactionsForSelectedMonth.length > 0 ? (
-                transactionsForSelectedMonth.map((transaction) => (
-                  <TransactionRow
-                    key={transaction.uid}
-                    transaction={transaction}
-                    onDelete={handleDelete}
-                    siloUid={siloUid}
-                  />
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center"
-                  >
-                    Geen transacties gevonden voor deze maand.
-                  </TableCell>
-                </TableRow>
-              )}
-            </tbody>
-          </Table>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-4">
-          <TotalsCard
-            label="Totale inkomsten"
-            amount={"+" + centsToCurrency(incomeTotal)}
-          />
-          <TotalsCard
-            label="Totale uitgaven"
-            amount={"-" + centsToCurrency(expenseTotal)}
-          />
-          <TotalsCard
-            label="Balans"
-            amount={centsToCurrency(balance)}
-          />
-        </div>
-      </div>
-
-      <CategoriesColumn
-        categories={categories}
-        siloUid={siloUid}
-      />
-    </div>
-  )
-}
-
-function CategoriesColumn({
-  categories,
-  siloUid,
-}: {
-  categories: Category[]
-  siloUid: string
-}) {
-  return (
     <div className="mx-auto p-6">
-      <Link
-        href={`/silo/${siloUid}/category/create`}
-        className="underline"
-      >
-        Voeg categorie toe
-      </Link>
-      <h2 className="mt-4 text-lg font-bold">Categorieën</h2>
-      <div className="mt-2">
-        {categories && categories.length > 0 ? (
-          // Display categories in horizontal cards
-          <div className="grid grid-cols-3 gap-4">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.uid}
-                category={category}
-                siloUid={siloUid}
-              />
-            ))}
-          </div>
-        ) : (
-          <p>Geen categorieën gevonden.</p>
-        )}
+      <div className="mb-4 flex items-center justify-between">
+        <Link
+          className="underline"
+          href="/silo"
+        >
+          Terug naar silo overzicht
+        </Link>
+        <Link
+          className="underline"
+          href={`/silo/${siloUid}/transactions/create`}
+        >
+          Nieuwe transactie aanmaken
+        </Link>
       </div>
-    </div>
-  )
-}
 
-// TODO: Na verwijderen van transactie, de categorieën herladen om de totale uitgaven te updaten
-function CategoryCard({
-  category,
-  siloUid,
-}: {
-  category: Category
-  siloUid: string
-}) {
-  const [totalExpense, setTotalExpense] = useState<number | null>(null)
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-center text-xl font-bold">
+          Transacties voor {silo?.name ?? "(naam onbekend)"}
+        </h1>
 
-  useEffect(() => {
-    if (category.uid) {
-      getCategoryExpenseTotalCents(siloUid, category.uid)
-        .then((total) => {
-          setTotalExpense(total)
-        })
-        .catch((error) => {
-          console.error("Fout bij het ophalen van totale uitgaven:", error)
-        })
-    }
-  }, [category.uid, siloUid])
+        <Select
+          name="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          options={availableMonths.map((month) => {
+            const [year, monthNum] = month.split("-")
+            return {
+              value: month,
+              label: `${monthNum}-${year}`,
+            }
+          })}
+          width="w-fit"
+        />
+      </div>
 
-  const budgeted = category.budgetedAmountInCents
-  const spent = totalExpense ?? 0
-  const remaining = budgeted - spent
-  const percentageLeft = budgeted > 0 ? remaining / budgeted : 0
+      <div className="rounded-lg border">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell header>Datum</TableCell>
+              <TableCell header>EUR</TableCell>
+              <TableCell header>Categorie</TableCell>
+              <TableCell header> </TableCell>
+            </TableRow>
+          </TableHead>
+          <tbody>
+            {transactionsForSelectedMonth.length > 0 ? (
+              transactionsForSelectedMonth.map((transaction) => (
+                <TransactionRow
+                  key={transaction.uid}
+                  transaction={transaction}
+                  onDelete={handleDelete}
+                  siloUid={siloUid}
+                />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={4}
+                  className="text-center"
+                >
+                  Geen transacties gevonden voor deze maand.
+                </TableCell>
+              </TableRow>
+            )}
+          </tbody>
+        </Table>
+      </div>
 
-  let statusColor = "bg-green-100 text-green-800"
-  if (remaining < 0) {
-    statusColor = "bg-red-100 text-red-800"
-  } else if (percentageLeft < 0.2) {
-    statusColor = "bg-yellow-100 text-yellow-800"
-  }
-
-  return (
-    <div
-      key={category.uid}
-      className={`space-y-2 rounded-lg border p-4`}
-    >
-      <h3 className="text-md font-semibold">{category.name}</h3>
-      <p className="text-sm">
-        EUR {centsToCurrency(spent)} / EUR {centsToCurrency(budgeted)}
-      </p>
-      {category.endDate && (
-        <p className="text-sm">Einddatum: {formatDate(category.endDate)}</p>
-      )}
-      <p className={`rounded px-2 py-1 text-sm font-semibold ${statusColor}`}>
-        {remaining < 0
-          ? `Budget overschreden met EUR ${centsToCurrency(Math.abs(remaining))}`
-          : `Nog EUR ${centsToCurrency(remaining)} beschikbaar`}
-      </p>
+      <div className="mt-4 grid grid-cols-3 gap-4">
+        <TotalsCard
+          label="Totale inkomsten"
+          amount={"+" + centsToCurrency(incomeTotal)}
+        />
+        <TotalsCard
+          label="Totale uitgaven"
+          amount={"-" + centsToCurrency(expenseTotal)}
+        />
+        <TotalsCard
+          label="Balans"
+          amount={centsToCurrency(balance)}
+        />
+      </div>
     </div>
   )
 }
