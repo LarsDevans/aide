@@ -36,7 +36,7 @@ export default function SiloViewIndex() {
                 className="flex items-center justify-between rounded border p-2"
               >
                 <Link
-                  href={`/silo/${silo.uid}/transactions`}
+                  href={`/silo/${silo.uid}`}
                   className="w-full flex-1"
                 >
                   <p className="font-bold">{silo.name}</p>

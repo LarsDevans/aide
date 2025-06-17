@@ -6,6 +6,8 @@ export default function Select({
   value = undefined,
   onChange,
   width = "w-full",
+  placeholder,
+  allowClear = false,
 }: SelectType) {
   return (
     <select
@@ -14,6 +16,14 @@ export default function Select({
       value={value}
       onChange={(e) => onChange(e)}
     >
+      {placeholder && (
+        <option
+          disabled={!allowClear}
+          value=""
+        >
+          {placeholder}
+        </option>
+      )}
       {options.map((option) => (
         <option
           key={option.value}

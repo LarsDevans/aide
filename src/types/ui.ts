@@ -11,7 +11,7 @@ export interface Button {
 export interface Input {
   name: string
   placeholder: string
-  type: "text" | "email" | "password" | "number"
+  type: "text" | "email" | "password" | "number" | "date"
   value?: string | number | undefined
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
   step?: string
@@ -30,4 +30,6 @@ export interface Select {
   value?: string
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void
   width?: "w-fit" | "w-full"
+  placeholder?: string
+  allowClear?: boolean
 }

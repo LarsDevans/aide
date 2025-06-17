@@ -6,24 +6,26 @@ import Select from "@/components/ui/Select"
 import { PencilLine, Trash2 } from "lucide-react"
 import { Transaction } from "@/types/transaction"
 import { Silo } from "@/types/silo"
-import { deleteByUid, listenForBySiloUid } from "@/lib/silo/transaction"
+import {
+  deleteByUid,
+  listenForBySiloUid as listenForTransactionsBySiloUid,
+} from "@/lib/silo/transaction"
 import { getByUid } from "@/lib/silo/silo"
 import Link from "next/link"
 import IconButton from "@/components/ui/IconButton"
 import { getMonthString, formatDate, sortByDateDesc } from "@/lib/helpers/date"
-import { useParams } from "next/navigation"
-import { centsToEuro } from "@/lib/helpers/currency"
+import { centsToCurrency } from "@/lib/helpers/currency"
 import router from "next/router"
+import { Category } from "@/types/category"
+import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 
-export default function TransactionViewIndex() {
-  const params = useParams()
-  const siloUid = params.uid as string
+export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
   const [silo, setSilo] = useState<Silo | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<string>()
 
   useEffect(() => {
-    const unsubscribe = listenForBySiloUid(
+    const unsubscribe = listenForTransactionsBySiloUid(
       siloUid,
       (transactions: Transaction[]) => {
         transactions.sort(sortByDateDesc)
@@ -102,7 +104,7 @@ export default function TransactionViewIndex() {
   }
 
   return (
-    <div className="mx-auto w-fit p-6">
+    <div className="mx-auto p-6">
       <div className="mb-4 flex items-center justify-between">
         <Link
           className="underline"
@@ -144,6 +146,7 @@ export default function TransactionViewIndex() {
             <TableRow>
               <TableCell header>Datum</TableCell>
               <TableCell header>EUR</TableCell>
+              <TableCell header>Categorie</TableCell>
               <TableCell header> </TableCell>
             </TableRow>
           </TableHead>
@@ -160,7 +163,7 @@ export default function TransactionViewIndex() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={3}
+                  colSpan={4}
                   className="text-center"
                 >
                   Geen transacties gevonden voor deze maand.
@@ -174,15 +177,15 @@ export default function TransactionViewIndex() {
       <div className="mt-4 grid grid-cols-3 gap-4">
         <TotalsCard
           label="Totale inkomsten"
-          amount={"+" + centsToEuro(incomeTotal)}
+          amount={"+" + centsToCurrency(incomeTotal)}
         />
         <TotalsCard
           label="Totale uitgaven"
-          amount={"-" + centsToEuro(expenseTotal)}
+          amount={"-" + centsToCurrency(expenseTotal)}
         />
         <TotalsCard
           label="Balans"
-          amount={centsToEuro(balance)}
+          amount={centsToCurrency(balance)}
         />
       </div>
     </div>
@@ -198,13 +201,27 @@ function TransactionRow({
   onDelete: (uid: string) => void
   siloUid: string
 }) {
+  const [category, setCategory] = useState<Category | null>(null)
+  useEffect(() => {
+    if (transaction.categoryUid) {
+      getCategoryByUid(siloUid, transaction.categoryUid)
+        .then((category) => {
+          setCategory(category)
+        })
+        .catch((error) => {
+          console.error("Fout bij het ophalen van categorie:", error)
+        })
+    }
+  }, [siloUid, transaction.categoryUid])
+
   return (
     <TableRow>
       <TableCell>{formatDate(transaction.createdAt)}</TableCell>
       <TableCell>
         {(transaction.type === "income" ? "+" : "-") +
-          centsToEuro(transaction.amountInCents)}
+          centsToCurrency(transaction.amountInCents)}
       </TableCell>
+      <TableCell>{category ? category.name : "Geen categorie"}</TableCell>
       <TableCell className="text-right">
         <Link href={`/silo/${siloUid}/transactions/${transaction.uid}/edit`}>
           <IconButton icon={<PencilLine />} />

@@ -2,6 +2,7 @@
 
 import TransactionForm from "@/components/silo/transactions/TransactionForm"
 import LoadingState from "@/components/ui/LoadingState"
+import { convertCentsToEuros, euroToCents } from "@/lib/helpers/currency"
 import { getByUid, update } from "@/lib/silo/transaction"
 import { createSchema } from "@/lib/validation/transaction"
 import { Transaction, TransactionFormData } from "@/types/transaction"
@@ -38,18 +39,19 @@ export default function TransactionViewEdit({
     const result = await update(siloUid, transactionUid, {
       ...transaction,
       type: transactionFormData.type,
-      amountInCents: transactionFormData.amountInEuros,
+      amountInCents: euroToCents(transactionFormData.amountInEuros),
+      categoryUid: transactionFormData.categoryUid,
     })
     if (result === null) {
       throw Error("Firebase foutmelding (zie console)")
     }
-    router.push(`/silo/${siloUid}/transactions`)
+    router.push(`/silo/${siloUid}`)
   }
 
   const formLinkActions = (
     <Link
       className="underline"
-      href={`/silo/${siloUid}/transactions`}
+      href={`/silo/${siloUid}`}
     >
       Annuleren
     </Link>
@@ -60,7 +62,8 @@ export default function TransactionViewEdit({
       linkActions={formLinkActions}
       initialFormData={{
         type: transaction.type,
-        amountInEuros: transaction.amountInCents,
+        amountInEuros: convertCentsToEuros(transaction.amountInCents),
+        categoryUid: transaction.categoryUid ?? undefined,
       }}
       submitText="Transactie aanpassen"
       title="Transactie aanpassen"

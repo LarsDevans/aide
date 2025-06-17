@@ -3,17 +3,13 @@
 
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
-import Select from "@/components/ui/Select"
-import { listenForBySiloUid } from "@/lib/silo/category"
-import { Category } from "@/types/category"
-import { TransactionFormData } from "@/types/transaction"
+import { formatDateForInput } from "@/lib/helpers/date"
+import { CategoryFormData } from "@/types/category"
 import clsx from "clsx"
-import React from "react"
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { ChangeEvent, FormEvent, ReactNode, useState } from "react"
 import { z } from "zod"
 
-export default function TransactionForm({
+export default function CategoryForm({
   buttonActions,
   initialFormData,
   linkActions,
@@ -23,49 +19,40 @@ export default function TransactionForm({
   submitAction,
 }: {
   buttonActions?: ReactNode
-  initialFormData?: TransactionFormData
+  initialFormData?: CategoryFormData
   linkActions?: ReactNode
   submitText: string
   title: string
   validation: z.ZodTypeAny
-  submitAction: (transactionFormData: TransactionFormData) => Promise<void>
+  submitAction: (categoryFormData: CategoryFormData) => Promise<void>
 }) {
-  const [transactionFormData, setTransactionFormData] =
-    useState<TransactionFormData>(
-      initialFormData ?? {
-        type: "income",
-        amountInEuros: 0,
-        categoryUid: undefined,
-      },
-    )
+  const [categoryFormData, setCategoryFormData] = useState<CategoryFormData>(
+    initialFormData ?? {
+      name: "",
+      budgetedAmountInEuros: 0,
+      endDate: null,
+    },
+  )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const params = useParams()
-  const siloUid = params.uid as string
-  const [categories, setCategories] = useState<Category[]>([])
-
-  useEffect(() => {
-    const unsubscribe = listenForBySiloUid(
-      siloUid,
-      (categories: Category[]) => {
-        setCategories(categories)
-      },
-    )
-    return () => unsubscribe()
-  }, [siloUid])
 
   // Note: could behave unexpectedly, but it should be safe.
-  const handleInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleStringInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setTransactionFormData((prev) => ({ ...prev, [name]: Number(value) }))
+    setCategoryFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSelectUpdate = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleNumberInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setTransactionFormData((prev) => ({
+    setCategoryFormData((prev) => ({ ...prev, [name]: Number(value) }))
+  }
+
+  const handleDateInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setCategoryFormData((prev) => ({
       ...prev,
-      [name]: value === "" ? undefined : value,
+      [name]: value ? new Date(value) : null,
     }))
   }
 
@@ -84,7 +71,7 @@ export default function TransactionForm({
     }
 
     try {
-      await submitAction(transactionFormData)
+      await submitAction(categoryFormData)
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message)
@@ -97,7 +84,7 @@ export default function TransactionForm({
   }
 
   const isFormValid = (): { valid: boolean; error?: string } => {
-    const result = validation.safeParse(transactionFormData)
+    const result = validation.safeParse(categoryFormData)
     if (!result.success) {
       return { valid: false, error: result.error.errors[0].message }
     }
@@ -112,39 +99,38 @@ export default function TransactionForm({
         className="flex flex-col space-y-2"
         onSubmit={handleFormSubmit}
       >
-        <Select
-          name="type"
-          value={transactionFormData.type}
-          onChange={handleSelectUpdate}
-          options={[
-            { value: "income", label: "Inkomen" },
-            { value: "expense", label: "Uitgave" },
-          ]}
+        <Input
+          name="name"
+          placeholder="Naam"
+          type="text"
+          value={categoryFormData.name}
+          onChange={handleStringInputUpdate}
         />
 
         <Input
-          name="amountInEuros"
-          placeholder="Prijs in euros"
+          name="budgetedAmountInEuros"
+          placeholder="Budgetbedrag in Euro's"
           type="number"
           step="0.01"
           value={
-            transactionFormData.amountInEuros === 0
+            categoryFormData.budgetedAmountInEuros === 0
               ? ""
-              : transactionFormData.amountInEuros
+              : categoryFormData.budgetedAmountInEuros
           }
-          onChange={handleInputUpdate}
+          onChange={handleNumberInputUpdate}
         />
 
-        <Select
-          name="categoryUid"
-          value={transactionFormData.categoryUid}
-          onChange={handleSelectUpdate}
-          options={categories.map((category) => ({
-            value: category.uid,
-            label: category.name,
-          }))}
-          placeholder="Selecteer een categorie (optioneel)"
-          allowClear
+        <label className="text-left">Einddatum (optioneel):</label>
+        <Input
+          name="endDate"
+          placeholder="Einddatum (optioneel)"
+          type="date"
+          value={
+            categoryFormData.endDate
+              ? formatDateForInput(categoryFormData.endDate)
+              : ""
+          }
+          onChange={handleDateInputUpdate}
         />
 
         <div
