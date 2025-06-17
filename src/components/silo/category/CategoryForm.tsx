@@ -3,6 +3,7 @@
 
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
+import { formatDateForInput } from "@/lib/helpers/date"
 import { CategoryFormData } from "@/types/category"
 import clsx from "clsx"
 import { ChangeEvent, FormEvent, ReactNode, useState } from "react"
@@ -119,13 +120,14 @@ export default function CategoryForm({
           onChange={handleNumberInputUpdate}
         />
 
+        <label className="text-left">Einddatum (optioneel):</label>
         <Input
           name="endDate"
           placeholder="Einddatum (optioneel)"
           type="date"
           value={
             categoryFormData.endDate
-              ? categoryFormData.endDate.toISOString().split("T")[0]
+              ? formatDateForInput(categoryFormData.endDate)
               : ""
           }
           onChange={handleDateInputUpdate}

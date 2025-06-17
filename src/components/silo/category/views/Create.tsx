@@ -27,13 +27,13 @@ export default function CategoryViewCreate({ siloUid }: { siloUid: string }) {
       throw Error("Firebase foutmelding (zie console)")
     }
 
-    router.push(`/silo/${siloUid}/transactions`)
+    router.push(`/silo/${siloUid}`)
   }
 
   const formLinkActions = (
     <Link
       className="underline"
-      href={`/silo/${siloUid}/transactions`}
+      href={`/silo/${siloUid}`}
     >
       Annuleren
     </Link>

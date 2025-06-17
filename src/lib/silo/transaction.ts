@@ -223,3 +223,26 @@ export async function update(
     return null
   }
 }
+
+export async function getByCategoryUid(
+  siloUid: string,
+  categoryUid: string,
+): Promise<Transaction[]> {
+  const transactions = await getBySiloUid(siloUid)
+  if (!transactions) return []
+  return transactions.filter(
+    (transaction) => transaction.categoryUid === categoryUid,
+  )
+}
+
+export async function getCategoryBalanceInCents(
+  siloUid: string,
+  categoryUid: string,
+): Promise<number> {
+  const transactions = await getByCategoryUid(siloUid, categoryUid)
+  return transactions.reduce((total, transaction) => {
+    return transaction.type === "income"
+      ? total - transaction.amountInCents
+      : total + transaction.amountInCents
+  }, 0)
+}

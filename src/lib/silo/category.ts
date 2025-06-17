@@ -7,6 +7,7 @@ import {
   setDoc,
   Unsubscribe,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "../firebase"
@@ -99,5 +100,49 @@ export async function getByUid(
       console.error("Er is een onbeschrijfelijke fout opgetreden")
     }
     return null
+  }
+}
+
+export async function update(
+  siloUid: string,
+  categoryUid: string,
+  category: Category,
+): Promise<Category | null> {
+  try {
+    const siloRef = doc(db, siloDocumentName, siloUid)
+    const categoryRef = doc(siloRef, documentName, categoryUid)
+
+    await setDoc(categoryRef, category)
+
+    return category
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
+    return null
+  }
+}
+export async function deleteByUid(
+  siloUid: string,
+  categoryUid: string,
+): Promise<void> {
+  try {
+    const categoryRef = doc(
+      db,
+      siloDocumentName,
+      siloUid,
+      documentName,
+      categoryUid,
+    )
+
+    await deleteDoc(categoryRef)
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    } else {
+      console.error("Er is een onbeschrijfelijke fout opgetreden")
+    }
   }
 }
