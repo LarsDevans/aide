@@ -37,7 +37,7 @@ export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
       <h2 className="mt-4 text-lg font-bold">Categorieën</h2>
       <div className="mt-2">
         {categories.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {categories.map((category) => (
               <CategoryCard
                 key={category.uid}
