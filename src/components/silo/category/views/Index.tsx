@@ -8,6 +8,8 @@ import { useEffect, useState } from "react"
 import { listenForBySiloUid as listenForCategories } from "@/lib/silo/category"
 import { listenForBySiloUid as listenForTransactions } from "@/lib/silo/transaction"
 import Link from "next/link"
+import EmptyState from "@/components/ui/EmptyState"
+import CategoryCtaCreate from "../cta/Create"
 
 export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
   const [categories, setCategories] = useState<Category[]>([])
@@ -48,7 +50,11 @@ export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
             ))}
           </div>
         ) : (
-          <p>Geen categorieën gevonden.</p>
+          <EmptyState
+            cta={
+              <CategoryCtaCreate href={`/silo/${siloUid}/category/create`} />
+            }
+          />
         )}
       </div>
     </div>
