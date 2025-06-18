@@ -18,7 +18,7 @@ export default function CategoryIndexGraph() {
           display: true,
           text: "Categorie",
           font: {
-            weight: "bold",
+            weight: "bold" as const,
           },
         },
       },
@@ -27,7 +27,7 @@ export default function CategoryIndexGraph() {
           display: true,
           text: "Bedrag in EUR",
           font: {
-            weight: "bold",
+            weight: "bold" as const,
           },
         },
       },
