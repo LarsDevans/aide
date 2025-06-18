@@ -10,6 +10,7 @@ import { listenForBySiloUid as listenForTransactions } from "@/lib/silo/transact
 import Link from "next/link"
 import EmptyState from "@/components/ui/EmptyState"
 import CategoryCtaCreate from "../cta/Create"
+import CategoryIndexGraph from "../graphs/IndexGraph"
 
 export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
   const [categories, setCategories] = useState<Category[]>([])
@@ -39,15 +40,19 @@ export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
       <h2 className="mt-4 text-lg font-bold">Categorieën</h2>
       <div className="mt-2">
         {categories.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.uid}
-                category={category}
-                siloUid={siloUid}
-                transactionsVersion={transactionsVersion}
-              />
-            ))}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              {categories.map((category) => (
+                <CategoryCard
+                  key={category.uid}
+                  category={category}
+                  siloUid={siloUid}
+                  transactionsVersion={transactionsVersion}
+                />
+              ))}
+            </div>
+
+            <CategoryIndexGraph />
           </div>
         ) : (
           <EmptyState
