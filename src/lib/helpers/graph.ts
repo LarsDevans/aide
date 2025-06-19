@@ -40,7 +40,6 @@ export function getDatasetFromTransactions(
         .filter((t) => t.type === type)
         .filter((t) => {
           const tDate = toDate(t.createdAt)
-          console.log(tDate)
           return (
             tDate.getFullYear() === date.getFullYear() &&
             tDate.getMonth() === date.getMonth() &&
