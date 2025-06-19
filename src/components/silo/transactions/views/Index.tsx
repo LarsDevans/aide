@@ -25,6 +25,7 @@ import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 import TransactionIndexGraph from "../graphs/IndexGraph"
 import { Tooltip } from "react-tooltip"
+import { useDrag } from "react-dnd"
 
 export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
@@ -225,8 +226,23 @@ function TransactionRow({
     }
   }, [siloUid, transaction.categoryUid])
 
+  const [{ isDragging }, dragRef] = useDrag({
+    type: "TRANSACTION",
+    item: { transaction },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  })
+
   return (
-    <TableRow>
+    <TableRow
+      // @ts-ignore
+      ref={dragRef}
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+        cursor: "grab",
+      }}
+    >
       <TableCell>{formatDate(transaction.createdAt)}</TableCell>
       <TableCell>
         {(transaction.type === "income" ? "+" : "-") +

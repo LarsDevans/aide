@@ -11,6 +11,7 @@ import Link from "next/link"
 import EmptyState from "@/components/ui/EmptyState"
 import CategoryCtaCreate from "../cta/Create"
 import CategoryIndexGraph from "../graphs/IndexGraph"
+import { useDrop } from "react-dnd"
 
 export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
   const [categories, setCategories] = useState<Category[]>([])
@@ -86,6 +87,19 @@ function CategoryCard({
       )
   }, [category.uid, siloUid, transactionsVersion])
 
+  const [{ isOver, canDrop }, dropRef] = useDrop({
+    accept: "TRANSACTION",
+    drop: (item: { transaction: any }) => {
+      alert(
+        `Transactie "${item.transaction.description || item.transaction.uid}" aan categorie "${category.name}" toewijzen!`
+      )
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  })
+
   const budgeted = category.budgetedAmountInCents
   const spent = totalExpense ?? 0
   const remaining = budgeted - spent
@@ -98,9 +112,20 @@ function CategoryCard({
     statusColor = "bg-yellow-100 text-yellow-800"
   }
 
+  const dropHighlight =
+    isOver && canDrop
+      ? "ring-2 ring-blue-400"
+      : canDrop
+      ? "ring-2 ring-blue-200"
+      : ""
+
   return (
     <Link href={`/silo/${siloUid}/category/${category.uid}/edit`}>
-      <div className="flex h-full flex-col justify-between space-y-2 rounded-lg border p-4">
+      <div
+        // @ts-ignore
+        ref={dropRef}
+        className={`flex h-full flex-col justify-between space-y-2 rounded-lg border p-4 transition-shadow ${dropHighlight}`}
+      >
         <div>
           <h3 className="text-md font-semibold">{category.name}</h3>
           <p className="text-sm">
