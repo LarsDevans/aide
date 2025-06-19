@@ -258,8 +258,6 @@ export async function assignCategory(
 
   if (!transaction || !category) return
 
-  console.log("New cat: " + category.name)
-
   await update(siloUid, transactionUid, {
     uid: transaction.uid,
     type: transaction.type,
