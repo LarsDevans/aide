@@ -40,5 +40,10 @@ export default function TransactionIndexGraph({ month }: { month: number }) {
 
   if (!transactions) return
 
-  return <Line data={getDatasetFromTransactions(month, transactions)} options={options} />
+  return (
+    <Line
+      data={getDatasetFromTransactions(month, transactions)}
+      options={options}
+    />
+  )
 }

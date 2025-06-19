@@ -1,6 +1,6 @@
 import { Category } from "@/types/category"
 import { Transaction } from "@/types/transaction"
-import { getDatesInMonth, getMonthString, toDate } from "./date"
+import { getDatesInMonth, toDate } from "./date"
 
 export function getDatasetFromCategories(
   categories: Category[],
@@ -29,28 +29,32 @@ export function getDatasetFromTransactions(
   month: number,
   transactions: Transaction[],
 ) {
-  const dates = getDatesInMonth(new Date().getFullYear(), month);
+  const dates = getDatesInMonth(new Date().getFullYear(), month)
   const labels = dates.map((d) =>
     d.toLocaleDateString("nl-NL", { month: "2-digit", day: "2-digit" }),
   )
 
   function getAccumulativeExpenses(date: Date, type: string) {
-    return transactions
-      .filter((t) => t.type === type)
-      .filter((t) => {
-        const tDate = toDate(t.createdAt)
-        console.log(tDate)
-        return (
-          tDate.getFullYear() === date.getFullYear() &&
-          tDate.getMonth() === date.getMonth() &&
-          tDate.getDate() === date.getDate()
-        )
-      })
-      .reduce((acc, n) => acc + n.amountInCents, 0) / 100;
+    return (
+      transactions
+        .filter((t) => t.type === type)
+        .filter((t) => {
+          const tDate = toDate(t.createdAt)
+          console.log(tDate)
+          return (
+            tDate.getFullYear() === date.getFullYear() &&
+            tDate.getMonth() === date.getMonth() &&
+            tDate.getDate() === date.getDate()
+          )
+        })
+        .reduce((acc, n) => acc + n.amountInCents, 0) / 100
+    )
   }
 
-  const expensesDataset = dates.map((d => getAccumulativeExpenses(d, "expense")))
-  const incomeDataset = dates.map((d => getAccumulativeExpenses(d, "income")))
+  const expensesDataset = dates.map((d) =>
+    getAccumulativeExpenses(d, "expense"),
+  )
+  const incomeDataset = dates.map((d) => getAccumulativeExpenses(d, "income"))
 
   return {
     labels,
