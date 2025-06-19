@@ -17,7 +17,7 @@ import {
 } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
 import { collection, getDocs } from "firebase/firestore"
-import { getByUid as getCategoryByUid } from '@/lib/silo/category';
+import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 
 export const documentName = "transactions"
 

@@ -236,7 +236,7 @@ function TransactionRow({
 
   return (
     <TableRow
-      // @ts-ignore
+      // @ts-expect-error ref is used by react-dnd
       ref={dragRef}
       style={{
         opacity: isDragging ? 0.5 : 1,
@@ -257,7 +257,10 @@ function TransactionRow({
           icon={<Trash2 />}
           onClick={() => onDelete(transaction.uid)}
         />
-        <a data-tooltip-id="my-tooltip" data-tooltip-content="Sleep naar een categorie">
+        <a
+          data-tooltip-id="my-tooltip"
+          data-tooltip-content="Sleep naar een categorie"
+        >
           <IconButton icon={<Move />} />
         </a>
         <Tooltip id="my-tooltip" />

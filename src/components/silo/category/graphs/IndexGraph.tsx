@@ -6,7 +6,11 @@ import { getCategoryBalanceInCents } from "@/lib/silo/transaction"
 import { Bar } from "react-chartjs-2"
 import { getDatasetFromCategories } from "@/lib/helpers/graph"
 
-export default function CategoryIndexGraph({ transactionVersion }: { transactionVersion: number }) {
+export default function CategoryIndexGraph({
+  transactionVersion,
+}: {
+  transactionVersion: number
+}) {
   const siloCtx = useContext(SiloContext)
   const [categories, setCategories] = useState<Category[] | null>(null)
   const [expenses, setExpenses] = useState<number[]>([])

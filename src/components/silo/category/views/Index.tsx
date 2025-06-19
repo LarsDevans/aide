@@ -2,7 +2,10 @@
 
 import { centsToCurrency } from "@/lib/helpers/currency"
 import { formatDate } from "@/lib/helpers/date"
-import { assignCategory, getCategoryBalanceInCents } from "@/lib/silo/transaction"
+import {
+  assignCategory,
+  getCategoryBalanceInCents,
+} from "@/lib/silo/transaction"
 import { Category } from "@/types/category"
 import { useEffect, useState } from "react"
 import { listenForBySiloUid as listenForCategories } from "@/lib/silo/category"
@@ -115,13 +118,13 @@ function CategoryCard({
     isOver && canDrop
       ? "ring-2 ring-blue-400"
       : canDrop
-      ? "ring-2 ring-blue-200"
-      : ""
+        ? "ring-2 ring-blue-200"
+        : ""
 
   return (
     <Link href={`/silo/${siloUid}/category/${category.uid}/edit`}>
       <div
-        // @ts-ignore
+        // @ts-expect-error ref is used by react-dnd
         ref={dropRef}
         className={`flex h-full flex-col justify-between space-y-2 rounded-lg border p-4 transition-shadow ${dropHighlight}`}
       >
