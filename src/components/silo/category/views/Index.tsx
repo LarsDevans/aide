@@ -54,7 +54,7 @@ export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
               ))}
             </div>
 
-            <CategoryIndexGraph />
+            <CategoryIndexGraph transactionVersion={transactionsVersion} />
           </div>
         ) : (
           <EmptyState
