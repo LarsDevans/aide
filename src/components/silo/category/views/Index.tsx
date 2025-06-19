@@ -2,7 +2,7 @@
 
 import { centsToCurrency } from "@/lib/helpers/currency"
 import { formatDate } from "@/lib/helpers/date"
-import { getCategoryBalanceInCents } from "@/lib/silo/transaction"
+import { assignCategory, getCategoryBalanceInCents } from "@/lib/silo/transaction"
 import { Category } from "@/types/category"
 import { useEffect, useState } from "react"
 import { listenForBySiloUid as listenForCategories } from "@/lib/silo/category"
@@ -12,6 +12,7 @@ import EmptyState from "@/components/ui/EmptyState"
 import CategoryCtaCreate from "../cta/Create"
 import CategoryIndexGraph from "../graphs/IndexGraph"
 import { useDrop } from "react-dnd"
+import { Transaction } from "@/types/transaction"
 
 export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
   const [categories, setCategories] = useState<Category[]>([])
@@ -89,10 +90,8 @@ function CategoryCard({
 
   const [{ isOver, canDrop }, dropRef] = useDrop({
     accept: "TRANSACTION",
-    drop: (item: { transaction: any }) => {
-      alert(
-        `Transactie "${item.transaction.description || item.transaction.uid}" aan categorie "${category.name}" toewijzen!`
-      )
+    drop: async (item: { transaction: Transaction }) => {
+      await assignCategory(siloUid, item.transaction.uid, category.uid)
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),

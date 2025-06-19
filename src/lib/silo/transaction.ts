@@ -17,6 +17,7 @@ import {
 } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
 import { collection, getDocs } from "firebase/firestore"
+import { getByUid as getCategoryByUid } from '@/lib/silo/category';
 
 export const documentName = "transactions"
 
@@ -245,4 +246,25 @@ export async function getCategoryBalanceInCents(
       ? total - transaction.amountInCents
       : total + transaction.amountInCents
   }, 0)
+}
+
+export async function assignCategory(
+  siloUid: string,
+  transactionUid: string,
+  categoryUid: string,
+) {
+  const transaction = await getByUid(siloUid, transactionUid)
+  const category = await getCategoryByUid(siloUid, categoryUid)
+
+  if (!transaction || !category) return
+
+  console.log("New cat: " + category.name)
+
+  await update(siloUid, transactionUid, {
+    uid: transaction.uid,
+    type: transaction.type,
+    amountInCents: transaction.amountInCents,
+    createdAt: transaction.createdAt,
+    categoryUid: category?.uid ?? transaction.categoryUid ?? "",
+  })
 }
