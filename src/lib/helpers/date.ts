@@ -60,3 +60,15 @@ export function sortByDateDesc<T extends { createdAt: AllowedDateInput }>(
 ): number {
   return toDate(b.createdAt).getTime() - toDate(a.createdAt).getTime()
 }
+
+export function getDatesInMonth(year: number, month: number) {
+  const dates = []
+  const date = new Date(year, month, 1)
+
+  while (date.getMonth() === month) {
+    dates.push(new Date(date))
+    date.setDate(date.getDate() + 1)
+  }
+
+  return dates
+}
