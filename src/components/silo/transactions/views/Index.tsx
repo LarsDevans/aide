@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/Table"
 import Select from "@/components/ui/Select"
-import { PencilLine, Trash2 } from "lucide-react"
+import { Move, PencilLine, Trash2 } from "lucide-react"
 import { Transaction } from "@/types/transaction"
 import { Silo } from "@/types/silo"
 import {
@@ -24,6 +24,7 @@ import router from "next/router"
 import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 import TransactionIndexGraph from "../graphs/IndexGraph"
+import { Tooltip } from "react-tooltip"
 
 export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
@@ -240,6 +241,10 @@ function TransactionRow({
           icon={<Trash2 />}
           onClick={() => onDelete(transaction.uid)}
         />
+        <a data-tooltip-id="my-tooltip" data-tooltip-content="Sleep naar een categorie">
+          <IconButton icon={<Move />} />
+        </a>
+        <Tooltip id="my-tooltip" />
       </TableCell>
     </TableRow>
   )
