@@ -13,11 +13,17 @@ import {
 import { getByUid } from "@/lib/silo/silo"
 import Link from "next/link"
 import IconButton from "@/components/ui/IconButton"
-import { getMonthString, formatDate, sortByDateDesc } from "@/lib/helpers/date"
+import {
+  getMonthString,
+  formatDate,
+  sortByDateDesc,
+  toDate,
+} from "@/lib/helpers/date"
 import { centsToCurrency } from "@/lib/helpers/currency"
 import router from "next/router"
 import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
+import TransactionIndexGraph from "../graphs/IndexGraph"
 
 export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
@@ -187,6 +193,10 @@ export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
           label="Balans"
           amount={centsToCurrency(balance)}
         />
+      </div>
+
+      <div className="mt-4">
+        <TransactionIndexGraph month={toDate(selectedMonth).getMonth()} />
       </div>
     </div>
   )
