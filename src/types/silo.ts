@@ -7,6 +7,7 @@ export type Silo = {
   isArchived: boolean
   ownerUid: string
   transactions?: Transaction[]
+  participants?: string[]
 }
 
 export type SiloFormData = {

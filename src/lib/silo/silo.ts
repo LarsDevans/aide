@@ -37,7 +37,7 @@ export function listenForByOwnerUid(
 ): Unsubscribe {
   const q = query(
     collection(db, documentName),
-    where("ownerUid", "==", ownerUid),
+    where("ownerUid", "==", ownerUid)
   )
   const unsubscribe = onSnapshot(
     q,
@@ -113,3 +113,56 @@ export async function unarchive(uid: string): Promise<Silo | null> {
   }
   return null
 }
+
+export function listenForByParticipant(
+  participantEmail: string,
+  callback: (silos: Silo[]) => void,
+): Unsubscribe {
+  const q = query(
+    collection(db, documentName),
+    where("participants", "array-contains", participantEmail)
+  )
+  const unsubscribe = onSnapshot(
+    q,
+    (querySnapshot) => {
+      const silos: Silo[] = []
+      querySnapshot.forEach((doc) => {
+        silos.push(doc.data() as Silo)
+      })
+      callback(silos)
+    },
+    (error) => {
+      console.error("Firebase foutmelding, details in console:", error.code)
+    },
+  )
+  return unsubscribe
+}
+
+export async function addParticipant(uid: string, email: string): Promise<Silo | null> {
+  const silo = await getByUid(uid);
+  if (silo !== null) {
+    const participants = silo.participants ?? [];
+
+    if (participants.includes(email)) {
+      return silo;
+    }
+
+    const newParticipants = [...participants, email];
+    return await update(uid, { ...silo, participants: newParticipants });
+  }
+  return null;
+}
+
+export async function removeParticipant(uid: string, email: string): Promise<Silo | null> {
+  const silo = await getByUid(uid);
+  if (silo !== null) {
+    const participants = silo.participants ?? [];
+
+    if (participants.includes(email)) {
+      const newParticipants = participants.filter(p => p !== email);
+      return await update(uid, { ...silo, participants: newParticipants });
+    }
+  }
+  return null;
+}
+
