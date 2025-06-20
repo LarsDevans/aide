@@ -9,6 +9,7 @@ import { Silo, SiloFormData } from "@/types/silo"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import ParticipantOverview from "./ParticipantOverview"
 
 export default function SiloViewEdit({ uid }: { uid: string }) {
   const [silo, setSilo] = useState<Silo | null>(null)
@@ -62,17 +63,21 @@ export default function SiloViewEdit({ uid }: { uid: string }) {
   )
 
   return (
-    <SiloForm
-      buttonActions={formButtonActions}
-      initialFormData={{
-        name: silo.name,
-        description: silo.description ?? "",
-      }}
-      linkActions={formLinkActions}
-      submitText="Silo aanpassen"
-      title="Pas de silo gegevens aan"
-      validation={updateSchema}
-      submitAction={updateSilo}
-    />
+    <div className="flex justify-center gap-4">
+      <SiloForm
+        buttonActions={formButtonActions}
+        initialFormData={{
+          name: silo.name,
+          description: silo.description ?? "",
+        }}
+        linkActions={formLinkActions}
+        submitText="Silo aanpassen"
+        title="Pas de silo gegevens aan"
+        validation={updateSchema}
+        submitAction={updateSilo}
+      />
+
+      <ParticipantOverview />
+    </div>
   )
 }
