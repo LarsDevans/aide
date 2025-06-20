@@ -77,7 +77,7 @@ export default function SiloViewEdit({ uid }: { uid: string }) {
         submitAction={updateSilo}
       />
 
-      <ParticipantOverview />
+      <ParticipantOverview siloUid={silo.uid} />
     </div>
   )
 }

@@ -5,7 +5,7 @@ export interface Button {
   label: string | ReactNode
   type?: "button" | "submit"
   width?: "w-fit" | "w-full"
-  onClick?: (e: FormEvent<HTMLButtonElement>) => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 export interface Input {
