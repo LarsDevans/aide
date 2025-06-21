@@ -75,20 +75,23 @@ function SiloItem({ silo, currentUser }: { silo: Silo, currentUser: User }) {
       >
         <div className="flex gap-x-2">
           <p className="font-bold">{silo.name}</p>
-          {currentUser.uid === silo.ownerUid && <div
-            data-tooltip-id="silo-owner-tip"
-            data-tooltip-content="Eigenaar"
-          >
-            {silo.participants && <Crown />}
-          </div>}
-          <div
-            data-tooltip-id="silo-tip"
-            data-tooltip-content="Gedeelde silo"
-          >
-            {silo.participants && <Users />}
-          </div>
-          <Tooltip id="silo-owner-tip" />
-          <Tooltip id="silo-tip" />
+          {(silo.participants && silo.participants.length > 0) &&
+            <>
+            {currentUser.uid === silo.ownerUid && <div
+              data-tooltip-id="silo-owner-tip"
+              data-tooltip-content="Eigenaar"
+            >
+              {silo.participants && <Crown />}
+            </div>}
+            <div
+              data-tooltip-id="silo-tip"
+              data-tooltip-content="Gedeelde silo"
+            >
+              <Users />
+            </div>
+            <Tooltip id="silo-owner-tip" />
+            <Tooltip id="silo-tip" />
+            </>}
         </div>
       </Link>
       <Link

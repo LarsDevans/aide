@@ -21,7 +21,7 @@ export default function SiloViewEdit({ uid }: { uid: string }) {
       setSilo(silo)
     }
     fetchSilo()
-  }, [uid])
+  }, [uid, silo?.participants])
 
   // To prevent unexpected behavior, we make sure the silo is loaded.
   if (silo === null) {
