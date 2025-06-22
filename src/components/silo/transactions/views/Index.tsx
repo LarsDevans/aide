@@ -20,17 +20,19 @@ import {
   toDate,
 } from "@/lib/helpers/date"
 import { centsToCurrency } from "@/lib/helpers/currency"
-import router from "next/router"
 import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 import TransactionIndexGraph from "../graphs/IndexGraph"
 import { Tooltip } from "react-tooltip"
 import { useDrag } from "react-dnd"
+import { useHotkeys } from "react-hotkeys-hook"
+import { useRouter } from "next/navigation"
 
 export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null)
   const [silo, setSilo] = useState<Silo | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<string>()
+  const router = useRouter()
 
   useEffect(() => {
     const subscription = listenForTransactionsBySiloUid$(siloUid).subscribe(
@@ -52,7 +54,7 @@ export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
       }
     }
     fetchSilo()
-  }, [siloUid])
+  }, [siloUid, router])
 
   useEffect(() => {
     if (transactions && transactions.length > 0) {
@@ -60,6 +62,14 @@ export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
       setSelectedMonth(getMonthString(firstTransaction.createdAt))
     }
   }, [transactions])
+
+  useHotkeys("ctrl+1", () => {
+    router.push(`/silo/${siloUid}/transactions/create`)
+  })
+
+  useHotkeys("ctrl+2", () => {
+    router.push(`/silo/${siloUid}/category/create`)
+  })
 
   const transactionsForSelectedMonth = useMemo(() => {
     return (
