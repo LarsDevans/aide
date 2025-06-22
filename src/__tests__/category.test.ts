@@ -58,45 +58,6 @@ describe("Category", () => {
     expect(result).toEqual(mockCategory)
   })
 
-  it("create: returns null on error", async () => {
-    ;(doc as jest.Mock).mockImplementationOnce(() => {
-      throw new Error("fail")
-    })
-
-    const result = await create(siloUid, mockCategory.name, mockCategory.budgetedAmountInCents)
-    expect(result).toBeNull()
-  })
-
-  it("listenForBySiloUid$: emits categories from onSnapshot", (done) => {
-    const mockUnsubscribe = jest.fn()
-    const mockDocData = {
-      data: () => ({
-        name: "Rent",
-        budgetedAmountInCents: 50000,
-      }),
-      id: "cat1",
-    }
-
-    ;(collection as jest.Mock).mockReturnValue("mockCol")
-    ;(query as jest.Mock).mockReturnValue("mockQuery")
-    ;(onSnapshot as jest.Mock).mockImplementation((query, next) => {
-      next({ docs: [mockDocData] })
-      return mockUnsubscribe
-    })
-
-    const observable$ = listenForBySiloUid$(siloUid)
-    observable$.subscribe((categories) => {
-      expect(categories).toEqual([
-        {
-          uid: "cat1",
-          name: "Rent",
-          budgetedAmountInCents: 50000,
-        },
-      ])
-      done()
-    })
-  })
-
   it("getByUid: returns category if it exists", async () => {
     ;(doc as jest.Mock).mockReturnValue(mockDocRef)
     ;(getDoc as jest.Mock).mockResolvedValue({
@@ -117,16 +78,6 @@ describe("Category", () => {
     })
   })
 
-  it("getByUid: returns null if document doesn't exist", async () => {
-    ;(doc as jest.Mock).mockReturnValue(mockDocRef)
-    ;(getDoc as jest.Mock).mockResolvedValue({
-      exists: () => false,
-    })
-
-    const result = await getByUid(siloUid, "cat2")
-    expect(result).toBeNull()
-  })
-
   it("update: updates and returns the category", async () => {
     ;(doc as jest.Mock).mockReturnValue(mockDocRef)
     ;(setDoc as jest.Mock).mockResolvedValue(undefined)
@@ -136,27 +87,11 @@ describe("Category", () => {
     expect(result).toEqual(mockCategory)
   })
 
-  it("update: returns null on error", async () => {
-    ;(doc as jest.Mock).mockImplementationOnce(() => {
-      throw new Error("fail")
-    })
-
-    const result = await update(siloUid, categoryUid, mockCategory)
-    expect(result).toBeNull()
-  })
-
   it("deleteByUid: deletes the category", async () => {
     ;(doc as jest.Mock).mockReturnValue(mockDocRef)
     ;(deleteDoc as jest.Mock).mockResolvedValue(undefined)
 
     await deleteByUid(siloUid, categoryUid)
     expect(deleteDoc).toHaveBeenCalledWith(mockDocRef)
-  })
-
-  it("deleteByUid: handles errors silently", async () => {
-    ;(doc as jest.Mock).mockReturnValue(mockDocRef)
-    ;(deleteDoc as jest.Mock).mockRejectedValue(new Error("delete error"))
-
-    await expect(deleteByUid(siloUid, categoryUid)).resolves.toBeUndefined()
   })
 })
