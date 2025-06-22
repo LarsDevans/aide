@@ -253,13 +253,13 @@ export async function assignCategory(
   siloUid: string,
   transactionUid: string,
   categoryUid: string,
-) {
+): Promise<Transaction | null> {
   const transaction = await getByUid(siloUid, transactionUid)
   const category = await getCategoryByUid(siloUid, categoryUid)
 
-  if (!transaction || !category) return
+  if (!transaction || !category) return null
 
-  await update(siloUid, transactionUid, {
+  return await update(siloUid, transactionUid, {
     uid: transaction.uid,
     type: transaction.type,
     amountInCents: transaction.amountInCents,

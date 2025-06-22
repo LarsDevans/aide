@@ -1,5 +1,5 @@
 import {
-  getByUid,
+  getByUid as getTransactionByUid,
   create,
   deleteByUid,
   update,
@@ -7,7 +7,6 @@ import {
 } from "@/lib/silo/transaction"
 import { Transaction } from "@/types/transaction"
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore"
-import * as transactionModule from "@/lib/silo/transaction"
 import { getByUid as getSiloByUid } from "@/lib/silo/silo"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 
@@ -49,7 +48,7 @@ describe("Transaction", () => {
   })
 
   it("getByUid: returns transaction when it exists", async () => {
-    (getSiloByUid as jest.Mock).mockResolvedValue({ uid: siloUid })
+    ;(getSiloByUid as jest.Mock).mockResolvedValue({ uid: siloUid })
     ;(doc as jest.Mock).mockReturnValue(mockDocRef)
     ;(getDoc as jest.Mock).mockResolvedValue({
       exists: () => true,
@@ -61,7 +60,7 @@ describe("Transaction", () => {
       }),
     })
 
-    const result = await getByUid(siloUid, transactionUid)
+    const result = await getTransactionByUid(siloUid, transactionUid)
     expect(result).toEqual(transactionData)
   })
 
@@ -92,21 +91,41 @@ describe("Transaction", () => {
     expect(deleteDoc).toHaveBeenCalledWith(mockDocRef)
   })
 
-  // TODO: Fix
-  it("assignCategory: assigns category if transaction and category exist", async () => {
-    const mockCategory = { uid: "cat-001" }
+  it("assignCategory: assigns category and returns updated transaction", async () => {
+    const categoryUid = "cat-123"
+    const mockCategory = {
+      uid: categoryUid,
+      name: "OV",
+      budgetedAmountInCents: 10000,
+    }
 
-    ;(getCategoryByUid as jest.Mock).mockResolvedValueOnce(mockCategory)
-    const updateSpy = jest.spyOn(transactionModule, "update").mockResolvedValue(transactionData)
+    ;(getSiloByUid as jest.Mock).mockResolvedValue({ uid: siloUid })
+    ;(getCategoryByUid as jest.Mock).mockResolvedValue(mockCategory)
+    ;(doc as jest.Mock).mockReturnValue(mockDocRef)
+    ;(getDoc as jest.Mock).mockResolvedValue({
+      exists: () => true,
+      id: transactionUid,
+      data: () => ({
+        type: "expense",
+        amountInCents: 5000,
+        createdAt: transactionData.createdAt,
+      }),
+    })
+    ;(setDoc as jest.Mock).mockResolvedValue(undefined)
 
-    await assignCategory(siloUid, transactionUid, mockCategory.uid)
+    const result = await assignCategory(siloUid, transactionUid, categoryUid)
 
-    expect(updateSpy).toHaveBeenCalledWith(
-      siloUid,
-      transactionUid,
-      expect.objectContaining({ categoryUid: mockCategory.uid }),
+    expect(getCategoryByUid).toHaveBeenCalledWith(siloUid, categoryUid)
+    expect(setDoc).toHaveBeenCalledWith(
+      mockDocRef,
+      expect.objectContaining({
+        uid: transactionUid,
+        categoryUid,
+      }),
     )
-
-    updateSpy.mockRestore()
+    expect(result).toMatchObject({
+      ...transactionData,
+      categoryUid,
+    })
   })
 })
