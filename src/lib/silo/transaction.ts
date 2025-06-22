@@ -16,7 +16,7 @@ import {
 } from "@/lib/silo/silo"
 import { collection, getDocs } from "firebase/firestore"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
-import { catchError, from, map, Observable, of, switchMap } from "rxjs"
+import { catchError, firstValueFrom, from, map, Observable, of, switchMap } from "rxjs"
 import { Silo } from "@/types/silo"
 
 export const documentName = "transactions"
@@ -230,8 +230,10 @@ export async function getByCategoryUid(
   siloUid: string,
   categoryUid: string,
 ): Promise<Transaction[]> {
-  const transactions = await getByCategoryUid(siloUid, categoryUid)
+  const transactions = await firstValueFrom(getTransactionsBySiloUid$(siloUid))
+
   if (!transactions) return []
+
   return transactions.filter(
     (transaction) => transaction.categoryUid === categoryUid,
   )
