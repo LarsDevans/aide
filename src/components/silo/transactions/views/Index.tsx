@@ -20,7 +20,6 @@ import {
   toDate,
 } from "@/lib/helpers/date"
 import { centsToCurrency } from "@/lib/helpers/currency"
-import router from "next/router"
 import { Category } from "@/types/category"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
 import TransactionIndexGraph from "../graphs/IndexGraph"
@@ -55,7 +54,7 @@ export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
       }
     }
     fetchSilo()
-  }, [siloUid])
+  }, [siloUid, router])
 
   useEffect(() => {
     if (transactions && transactions.length > 0) {
