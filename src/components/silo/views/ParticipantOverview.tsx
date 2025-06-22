@@ -1,28 +1,31 @@
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { addParticipant, listenForByOwnerUid, removeParticipant } from '@/lib/silo/silo';
-import { Silo } from '@/types/silo';
-import { X } from 'lucide-react';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import Button from "@/components/ui/Button"
+import Input from "@/components/ui/Input"
+import { useCurrentUser } from "@/hooks/useCurrentUser"
+import {
+  addParticipant,
+  listenForByOwnerUid$,
+  removeParticipant,
+} from "@/lib/silo/silo"
+import { Silo } from "@/types/silo"
+import { X } from "lucide-react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 
 export default function ParticipantOverview({ siloUid }: { siloUid: string }) {
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState<string>("")
   const [participants, setParticipants] = useState<string[] | undefined>()
   const currentUser = useCurrentUser()
 
   useEffect(() => {
-    const unsubscribe = listenForByOwnerUid(
-      currentUser.uid,
+    const subscription = listenForByOwnerUid$(currentUser.uid).subscribe(
       (silos: Silo[]) => {
-        const activeSilo = silos.filter((silo) => silo.uid === siloUid)
-        if (activeSilo.length > 0) {
-          setParticipants(activeSilo[0].participants)
+        const activeSilo = silos.find((silo) => silo.uid === siloUid)
+        if (activeSilo) {
+          setParticipants(activeSilo.participants)
         }
       },
     )
-    return () => unsubscribe()
-  }, [currentUser.uid])
+    return () => subscription.unsubscribe()
+  }, [currentUser.uid, siloUid])
 
   const handleInputUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -31,20 +34,23 @@ export default function ParticipantOverview({ siloUid }: { siloUid: string }) {
 
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await addParticipant(siloUid, email);
+    await addParticipant(siloUid, email)
   }
 
   const handleRemoveButton = async (email: string) => {
-    await removeParticipant(siloUid, email);
-  };
+    await removeParticipant(siloUid, email)
+  }
 
   return (
     <div className="w-96 space-y-2 text-center">
       <h1 className="text-center text-xl font-bold">Deelnemers</h1>
 
-      {participants && participants.length > 0
-        ? participants.map(p => (
-          <div key={p} className='flex justify-between items-center'>
+      {participants && participants.length > 0 ? (
+        participants.map((p) => (
+          <div
+            key={p}
+            className="flex items-center justify-between"
+          >
             <i>{p}</i>
             <Button
               label={<X />}
@@ -52,12 +58,14 @@ export default function ParticipantOverview({ siloUid }: { siloUid: string }) {
             />
           </div>
         ))
-      : <i>Er zijn geen deelnemers</i>}
+      ) : (
+        <i>Er zijn geen deelnemers</i>
+      )}
 
       <hr />
 
       <form
-        className='flex gap-x-2'
+        className="flex gap-x-2"
         onSubmit={handleFormSubmit}
       >
         <Input
@@ -67,9 +75,7 @@ export default function ParticipantOverview({ siloUid }: { siloUid: string }) {
           value={email}
           onChange={handleInputUpdate}
         />
-        <Button
-          label="Toevoegen"
-        />
+        <Button label="Toevoegen" />
       </form>
     </div>
   )

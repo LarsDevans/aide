@@ -8,7 +8,7 @@ import { Transaction } from "@/types/transaction"
 import { Silo } from "@/types/silo"
 import {
   deleteByUid,
-  listenForBySiloUid as listenForTransactionsBySiloUid,
+  listenForBySiloUid$ as listenForTransactionsBySiloUid$,
 } from "@/lib/silo/transaction"
 import { getByUid } from "@/lib/silo/silo"
 import Link from "next/link"
@@ -33,14 +33,13 @@ export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
   const [selectedMonth, setSelectedMonth] = useState<string>()
 
   useEffect(() => {
-    const unsubscribe = listenForTransactionsBySiloUid(
-      siloUid,
+    const subscription = listenForTransactionsBySiloUid$(siloUid).subscribe(
       (transactions: Transaction[]) => {
         transactions.sort(sortByDateDesc)
         setTransactions(transactions)
       },
     )
-    return () => unsubscribe()
+    return () => subscription.unsubscribe()
   }, [siloUid])
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import { db } from "@/lib/firebase"
 import { Silo } from "@/types/silo"
 import { FirebaseError } from "firebase/app"
-import { Unsubscribe } from "firebase/auth"
 import {
   collection,
   doc,
@@ -12,6 +11,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore"
+import { Observable } from "rxjs"
 import { uid } from "uid"
 
 export const documentName = "silos"
@@ -31,28 +31,30 @@ export async function getByUid(uid: string): Promise<Silo | null> {
   }
 }
 
-export function listenForByOwnerUid(
-  ownerUid: string,
-  callback: (silos: Silo[]) => void,
-): Unsubscribe {
-  const q = query(
-    collection(db, documentName),
-    where("ownerUid", "==", ownerUid)
-  )
-  const unsubscribe = onSnapshot(
-    q,
-    (querySnapshot) => {
-      const silos: Silo[] = []
-      querySnapshot.forEach((doc) => {
-        silos.push(doc.data() as Silo)
-      })
-      callback(silos)
-    },
-    (error) => {
-      console.error("Firebase foutmelding, details in console:", error.code)
-    },
-  )
-  return unsubscribe
+export function listenForByOwnerUid$(ownerUid: string): Observable<Silo[]> {
+  return new Observable<Silo[]>((subscriber) => {
+    const q = query(
+      collection(db, documentName),
+      where("ownerUid", "==", ownerUid),
+    )
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const silos: Silo[] = []
+        querySnapshot.forEach((doc) => {
+          silos.push(doc.data() as Silo)
+        })
+        subscriber.next(silos)
+      },
+      (error) => {
+        console.error("Firebase foutmelding, details in console:", error.code)
+        subscriber.error(error)
+      },
+    )
+
+    return () => unsubscribe()
+  })
 }
 
 export async function create(
@@ -114,55 +116,64 @@ export async function unarchive(uid: string): Promise<Silo | null> {
   return null
 }
 
-export function listenForByParticipant(
+export function listenForByParticipant$(
   participantEmail: string,
-  callback: (silos: Silo[]) => void,
-): Unsubscribe {
-  const q = query(
-    collection(db, documentName),
-    where("participants", "array-contains", participantEmail)
-  )
-  const unsubscribe = onSnapshot(
-    q,
-    (querySnapshot) => {
-      const silos: Silo[] = []
-      querySnapshot.forEach((doc) => {
-        silos.push(doc.data() as Silo)
-      })
-      callback(silos)
-    },
-    (error) => {
-      console.error("Firebase foutmelding, details in console:", error.code)
-    },
-  )
-  return unsubscribe
+): Observable<Silo[]> {
+  return new Observable<Silo[]>((subscriber) => {
+    const q = query(
+      collection(db, documentName),
+      where("participants", "array-contains", participantEmail),
+    )
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const silos: Silo[] = []
+        querySnapshot.forEach((doc) => {
+          silos.push(doc.data() as Silo)
+        })
+        subscriber.next(silos)
+      },
+      (error) => {
+        console.error("Firebase foutmelding, details in console:", error.code)
+        subscriber.error(error)
+      },
+    )
+
+    return () => unsubscribe()
+  })
 }
 
-export async function addParticipant(uid: string, email: string): Promise<Silo | null> {
-  const silo = await getByUid(uid);
+export async function addParticipant(
+  uid: string,
+  email: string,
+): Promise<Silo | null> {
+  const silo = await getByUid(uid)
   if (silo !== null) {
-    const participants = silo.participants ?? [];
+    const participants = silo.participants ?? []
 
     if (participants.includes(email)) {
-      return silo;
+      return silo
     }
 
-    const newParticipants = [...participants, email];
-    return await update(uid, { ...silo, participants: newParticipants });
+    const newParticipants = [...participants, email]
+    return await update(uid, { ...silo, participants: newParticipants })
   }
-  return null;
+  return null
 }
 
-export async function removeParticipant(uid: string, email: string): Promise<Silo | null> {
-  const silo = await getByUid(uid);
+export async function removeParticipant(
+  uid: string,
+  email: string,
+): Promise<Silo | null> {
+  const silo = await getByUid(uid)
   if (silo !== null) {
-    const participants = silo.participants ?? [];
+    const participants = silo.participants ?? []
 
     if (participants.includes(email)) {
-      const newParticipants = participants.filter(p => p !== email);
-      return await update(uid, { ...silo, participants: newParticipants });
+      const newParticipants = participants.filter((p) => p !== email)
+      return await update(uid, { ...silo, participants: newParticipants })
     }
   }
-  return null;
+  return null
 }
-

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react"
 import { SiloContext } from "@/contexts/SiloProvider"
-import { listenForBySiloUid as listenForTransactions } from "@/lib/silo/transaction"
+import { listenForBySiloUid$ as listenForTransactions$ } from "@/lib/silo/transaction"
 import { Line } from "react-chartjs-2"
 import { getDatasetFromTransactions } from "@/lib/helpers/graph"
 import { Transaction } from "@/types/transaction"
@@ -34,8 +34,11 @@ export default function TransactionIndexGraph({ month }: { month: number }) {
 
   useEffect(() => {
     if (!siloCtx.siloUid) return
-    const unsubscribe = listenForTransactions(siloCtx.siloUid, setTransactions)
-    return unsubscribe
+
+    const subscription = listenForTransactions$(siloCtx.siloUid).subscribe(
+      setTransactions,
+    )
+    return () => subscription.unsubscribe()
   }, [siloCtx.siloUid])
 
   if (!transactions) return

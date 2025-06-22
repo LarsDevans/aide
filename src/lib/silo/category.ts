@@ -5,7 +5,6 @@ import {
   onSnapshot,
   query,
   setDoc,
-  Unsubscribe,
   getDoc,
   deleteDoc,
 } from "firebase/firestore"
@@ -13,6 +12,7 @@ import { uid } from "uid"
 import { db } from "../firebase"
 import { documentName as siloDocumentName } from "@/lib/silo/silo"
 import { FirebaseError } from "firebase/app"
+import { Observable } from "rxjs"
 
 export const documentName = "categories"
 
@@ -50,33 +50,32 @@ export async function create(
   }
 }
 
-export function listenForBySiloUid(
-  siloUid: string,
-  callback: (categories: Category[]) => void,
-): Unsubscribe {
-  const categoryCol = collection(db, siloDocumentName, siloUid, documentName)
+export function listenForBySiloUid$(siloUid: string): Observable<Category[]> {
+  return new Observable<Category[]>((subscriber) => {
+    const categoryCol = collection(db, siloDocumentName, siloUid, documentName)
+    const q = query(categoryCol)
 
-  const q = query(categoryCol)
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const categories: Category[] = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          uid: doc.id,
+        })) as Category[]
+        subscriber.next(categories)
+      },
+      (error) => {
+        if (error instanceof FirebaseError) {
+          console.error("Firebase foutmelding, details in console:", error.code)
+        } else {
+          console.error("Er is een onbeschrijfelijke fout opgetreden")
+        }
+        subscriber.error(error)
+      },
+    )
 
-  const unsubscribe = onSnapshot(
-    q,
-    (snapshot) => {
-      const categories: Category[] = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        uid: doc.id,
-      })) as Category[]
-      callback(categories)
-    },
-    (error) => {
-      if (error instanceof FirebaseError) {
-        console.error("Firebase foutmelding, details in console:", error.code)
-      } else {
-        console.error("Er is een onbeschrijfelijke fout opgetreden")
-      }
-    },
-  )
-
-  return unsubscribe
+    return () => unsubscribe()
+  })
 }
 
 export async function getByUid(
