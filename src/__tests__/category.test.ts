@@ -1,12 +1,16 @@
 import {
   create,
-  listenForBySiloUid$,
   getByUid,
   update,
   deleteByUid,
 } from "@/lib/silo/category"
 import { Category } from "@/types/category"
-import { doc, getDoc, setDoc, deleteDoc, collection, query, onSnapshot } from "firebase/firestore"
+import {
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore"
 import { uid } from "uid"
 
 jest.mock("../lib/firebase", () => ({
@@ -47,7 +51,11 @@ describe("Category", () => {
     ;(doc as jest.Mock).mockReturnValueOnce(mockDocRef)
     ;(setDoc as jest.Mock).mockResolvedValue(undefined)
 
-    const result = await create(siloUid, mockCategory.name, mockCategory.budgetedAmountInCents)
+    const result = await create(
+      siloUid,
+      mockCategory.name,
+      mockCategory.budgetedAmountInCents,
+    )
 
     expect(uid).toHaveBeenCalledWith(32)
     expect(setDoc).toHaveBeenCalledWith(mockDocRef, {
