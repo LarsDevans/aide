@@ -3,7 +3,7 @@
 import EmptyState from "@/components/ui/EmptyState"
 import IconButton from "@/components/ui/IconButton"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { listenForByOwnerUid, unarchive } from "@/lib/silo/silo"
+import { listenForByOwnerUid$, unarchive } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
 import { ArchiveRestore } from "lucide-react"
 import Link from "next/link"
@@ -14,14 +14,13 @@ export default function SiloViewArchive() {
   const currentUser = useCurrentUser()
 
   useEffect(() => {
-    const unsubscribe = listenForByOwnerUid(
-      currentUser.uid,
+    const subscription = listenForByOwnerUid$(currentUser.uid).subscribe(
       (silos: Silo[]) => {
         const archivedSilos = silos.filter((silo) => silo.isArchived)
         setSilos(archivedSilos)
       },
     )
-    return () => unsubscribe()
+    return () => subscription.unsubscribe()
   }, [currentUser.uid])
 
   const unarchiveSilo = async (silo: Silo) => {

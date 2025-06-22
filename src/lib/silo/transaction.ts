@@ -7,7 +7,6 @@ import {
   onSnapshot,
   query,
   setDoc,
-  Unsubscribe,
 } from "firebase/firestore"
 import { uid } from "uid"
 import { db } from "@/lib/firebase"
@@ -15,9 +14,10 @@ import {
   documentName as siloDocumentName,
   getByUid as getSiloByUid,
 } from "@/lib/silo/silo"
-import { Silo } from "@/types/silo"
 import { collection, getDocs } from "firebase/firestore"
 import { getByUid as getCategoryByUid } from "@/lib/silo/category"
+import { catchError, from, map, Observable, of, switchMap } from "rxjs"
+import { Silo } from "@/types/silo"
 
 export const documentName = "transactions"
 
@@ -63,74 +63,76 @@ export async function getByUid(
   }
 }
 
-export async function getBySiloUid(
+export function getTransactionsBySiloUid$(
   siloUid: string,
-): Promise<Transaction[] | null> {
-  try {
-    const silo: Silo | null = await getSiloByUid(siloUid)
+): Observable<Transaction[] | null> {
+  return from(getSiloByUid(siloUid)).pipe(
+    switchMap((silo) => {
+      if (!silo) {
+        console.error("Silo not found")
+        return of(null)
+      }
+      const transactionsCol = collection(
+        db,
+        siloDocumentName,
+        siloUid,
+        documentName,
+      )
+      return from(getDocs(transactionsCol)).pipe(
+        map(
+          (snapshot) =>
+            snapshot.docs.map((doc) => ({
+              ...doc.data(),
+              uid: doc.id,
+            })) as Transaction[],
+        ),
+      )
+    }),
+    catchError((error) => {
+      if (error instanceof FirebaseError) {
+        console.error("Firebase foutmelding, details in console:", error.code)
+      } else {
+        console.error("Er is een onbeschrijfelijke fout opgetreden")
+      }
+      return of(null)
+    }),
+  )
+}
 
-    if (!silo) {
-      console.error("Silo not found")
-      return null
-    }
-
+export function listenForBySiloUid$(
+  siloUid: string,
+): Observable<Transaction[]> {
+  return new Observable<Transaction[]>((subscriber) => {
     const transactionsCol = collection(
       db,
       siloDocumentName,
       siloUid,
       documentName,
     )
+    const q = query(transactionsCol)
 
-    const snapshot = await getDocs(transactionsCol)
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const transactions: Transaction[] = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          uid: doc.id,
+        })) as Transaction[]
+        subscriber.next(transactions)
+      },
+      (error) => {
+        if (error instanceof FirebaseError) {
+          console.error("Firebase foutmelding, details in console:", error.code)
+          subscriber.error(error)
+        } else {
+          console.error("Er is een onbeschrijfelijke fout opgetreden")
+          subscriber.error(error)
+        }
+      },
+    )
 
-    const transactions: Transaction[] = snapshot.docs.map((doc) => ({
-      ...doc.data(),
-      uid: doc.id,
-    })) as Transaction[]
-
-    return transactions
-  } catch (error: unknown) {
-    if (error instanceof FirebaseError) {
-      console.error("Firebase foutmelding, details in console:", error.code)
-    } else {
-      console.error("Er is een onbeschrijfelijke fout opgetreden")
-    }
-    return null
-  }
-}
-
-export function listenForBySiloUid(
-  siloUid: string,
-  callback: (transactions: Transaction[]) => void,
-): Unsubscribe {
-  const transactionsCol = collection(
-    db,
-    siloDocumentName,
-    siloUid,
-    documentName,
-  )
-
-  const q = query(transactionsCol)
-
-  const unsubscribe = onSnapshot(
-    q,
-    (snapshot) => {
-      const transactions: Transaction[] = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        uid: doc.id,
-      })) as Transaction[]
-      callback(transactions)
-    },
-    (error) => {
-      if (error instanceof FirebaseError) {
-        console.error("Firebase foutmelding, details in console:", error.code)
-      } else {
-        console.error("Er is een onbeschrijfelijke fout opgetreden")
-      }
-    },
-  )
-
-  return unsubscribe
+    return () => unsubscribe()
+  })
 }
 
 export async function create(
@@ -153,7 +155,6 @@ export async function create(
       transaction.categoryUid = categoryUid
     }
 
-    // transaction is collection inside the silo collection
     const siloRef = doc(db, siloDocumentName, siloUid)
     const transactionRef = doc(siloRef, documentName, transaction.uid)
 
@@ -229,7 +230,7 @@ export async function getByCategoryUid(
   siloUid: string,
   categoryUid: string,
 ): Promise<Transaction[]> {
-  const transactions = await getBySiloUid(siloUid)
+  const transactions = await getByCategoryUid(siloUid, categoryUid)
   if (!transactions) return []
   return transactions.filter(
     (transaction) => transaction.categoryUid === categoryUid,

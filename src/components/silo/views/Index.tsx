@@ -3,7 +3,7 @@
 import SiloCtaCreate from "@/components/silo/cta/Create"
 import EmptyState from "@/components/ui/EmptyState"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { listenForByOwnerUid, listenForByParticipant } from "@/lib/silo/silo"
+import { listenForByOwnerUid$, listenForByParticipant$ } from "@/lib/silo/silo"
 import { Silo } from "@/types/silo"
 import { User } from "firebase/auth"
 import { Crown, PencilLine, Users } from "lucide-react"
@@ -16,25 +16,29 @@ export default function SiloViewIndex() {
   const currentUser = useCurrentUser()
 
   useEffect(() => {
-    if (!currentUser.uid || !currentUser.email) return;
+    if (!currentUser.uid || !currentUser.email) return
 
-    const combinedMap = new Map<string, Silo>();
+    const combinedMap = new Map<string, Silo>()
 
     const handleUpdate = (updated: Silo[]) => {
       updated
         .filter((silo) => !silo.isArchived)
-        .forEach((silo) => combinedMap.set(silo.uid, silo));
-      setSilos(Array.from(combinedMap.values()));
-    };
+        .forEach((silo) => combinedMap.set(silo.uid, silo))
+      setSilos(Array.from(combinedMap.values()))
+    }
 
-    const unsubByOwner = listenForByOwnerUid(currentUser.uid, handleUpdate);
-    const unsubByParticipant = listenForByParticipant(currentUser.email, handleUpdate);
+    const unsubByOwner = listenForByOwnerUid$(currentUser.uid).subscribe(
+      handleUpdate,
+    )
+    const unsubByParticipant = listenForByParticipant$(
+      currentUser.email,
+    ).subscribe(handleUpdate)
 
     return () => {
-      unsubByOwner();
-      unsubByParticipant();
-    };
-  }, [currentUser.uid, currentUser.email]);
+      unsubByOwner.unsubscribe()
+      unsubByParticipant.unsubscribe()
+    }
+  }, [currentUser.uid, currentUser.email])
 
   return (
     <div className="flex w-96 flex-col space-y-2">
@@ -43,7 +47,11 @@ export default function SiloViewIndex() {
       <ul className="space-y-2">
         {silos && silos.length > 0
           ? silos.map((silo) => (
-              <SiloItem key={silo.uid} silo={silo} currentUser={currentUser} />
+              <SiloItem
+                key={silo.uid}
+                silo={silo}
+                currentUser={currentUser}
+              />
             ))
           : silos && <EmptyState cta={<SiloCtaCreate />} />}
       </ul>
@@ -66,7 +74,7 @@ export default function SiloViewIndex() {
   )
 }
 
-function SiloItem({ silo, currentUser }: { silo: Silo, currentUser: User }) {
+function SiloItem({ silo, currentUser }: { silo: Silo; currentUser: User }) {
   return (
     <li className="flex items-center justify-between rounded border p-2">
       <Link
@@ -75,23 +83,26 @@ function SiloItem({ silo, currentUser }: { silo: Silo, currentUser: User }) {
       >
         <div className="flex gap-x-2">
           <p className="font-bold">{silo.name}</p>
-          {(silo.participants && silo.participants.length > 0) &&
+          {silo.participants && silo.participants.length > 0 && (
             <>
-            {currentUser.uid === silo.ownerUid && <div
-              data-tooltip-id="silo-owner-tip"
-              data-tooltip-content="Eigenaar"
-            >
-              {silo.participants && <Crown />}
-            </div>}
-            <div
-              data-tooltip-id="silo-tip"
-              data-tooltip-content="Gedeelde silo"
-            >
-              <Users />
-            </div>
-            <Tooltip id="silo-owner-tip" />
-            <Tooltip id="silo-tip" />
-            </>}
+              {currentUser.uid === silo.ownerUid && (
+                <div
+                  data-tooltip-id="silo-owner-tip"
+                  data-tooltip-content="Eigenaar"
+                >
+                  {silo.participants && <Crown />}
+                </div>
+              )}
+              <div
+                data-tooltip-id="silo-tip"
+                data-tooltip-content="Gedeelde silo"
+              >
+                <Users />
+              </div>
+              <Tooltip id="silo-owner-tip" />
+              <Tooltip id="silo-tip" />
+            </>
+          )}
         </div>
       </Link>
       <Link

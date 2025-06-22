@@ -8,8 +8,8 @@ import {
 } from "@/lib/silo/transaction"
 import { Category } from "@/types/category"
 import { useEffect, useState } from "react"
-import { listenForBySiloUid as listenForCategories } from "@/lib/silo/category"
-import { listenForBySiloUid as listenForTransactions } from "@/lib/silo/transaction"
+import { listenForBySiloUid$ as listenForCategories$ } from "@/lib/silo/category"
+import { listenForBySiloUid$ as listenForTransactions$ } from "@/lib/silo/transaction"
 import Link from "next/link"
 import EmptyState from "@/components/ui/EmptyState"
 import CategoryCtaCreate from "../cta/Create"
@@ -22,15 +22,21 @@ export default function CategoryViewIndex({ siloUid }: { siloUid: string }) {
   const [transactionsVersion, setTransactionsVersion] = useState(0)
 
   useEffect(() => {
-    const unsubscribe = listenForCategories(siloUid, setCategories)
-    return unsubscribe
+    if (!siloUid) return
+
+    const subscription = listenForCategories$(siloUid).subscribe(setCategories)
+
+    return () => subscription.unsubscribe()
   }, [siloUid])
 
   useEffect(() => {
-    const unsubscribe = listenForTransactions(siloUid, () =>
+    if (!siloUid) return
+
+    const subscription = listenForTransactions$(siloUid).subscribe(() =>
       setTransactionsVersion((v) => v + 1),
     )
-    return unsubscribe
+
+    return () => subscription.unsubscribe()
   }, [siloUid])
 
   return (

@@ -4,7 +4,7 @@
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
 import Select from "@/components/ui/Select"
-import { listenForBySiloUid } from "@/lib/silo/category"
+import { listenForBySiloUid$ } from "@/lib/silo/category"
 import { Category } from "@/types/category"
 import { TransactionFormData } from "@/types/transaction"
 import clsx from "clsx"
@@ -46,13 +46,12 @@ export default function TransactionForm({
   const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
-    const unsubscribe = listenForBySiloUid(
-      siloUid,
+    const subscription = listenForBySiloUid$(siloUid).subscribe(
       (categories: Category[]) => {
         setCategories(categories)
       },
     )
-    return () => unsubscribe()
+    return () => subscription.unsubscribe()
   }, [siloUid])
 
   // Note: could behave unexpectedly, but it should be safe.

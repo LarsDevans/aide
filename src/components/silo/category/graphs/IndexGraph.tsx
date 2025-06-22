@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 import { SiloContext } from "@/contexts/SiloProvider"
 import { Category } from "@/types/category"
-import { listenForBySiloUid as listenForCategories } from "@/lib/silo/category"
+import { listenForBySiloUid$ as listenForCategories$ } from "@/lib/silo/category"
 import { getCategoryBalanceInCents } from "@/lib/silo/transaction"
 import { Bar } from "react-chartjs-2"
 import { getDatasetFromCategories } from "@/lib/helpers/graph"
+import { forkJoin } from "rxjs"
 
 export default function CategoryIndexGraph({
   transactionVersion,
@@ -40,18 +41,27 @@ export default function CategoryIndexGraph({
 
   useEffect(() => {
     if (!siloCtx.siloUid) return
-    const unsubscribe = listenForCategories(siloCtx.siloUid, setCategories)
-    return unsubscribe
+
+    const subscription = listenForCategories$(siloCtx.siloUid).subscribe(
+      setCategories,
+    )
+
+    return () => subscription.unsubscribe()
   }, [siloCtx.siloUid])
 
   useEffect(() => {
     if (!siloCtx.siloUid || !categories) return
 
-    Promise.all(
-      categories.map((c) =>
-        getCategoryBalanceInCents(siloCtx.siloUid as string, c.uid),
-      ),
-    ).then(setExpenses)
+    const balanceObservables = categories.map((c) =>
+      getCategoryBalanceInCents(siloCtx.siloUid as string, c.uid),
+    )
+
+    const subscription = forkJoin(balanceObservables).subscribe({
+      next: (balances) => setExpenses(balances),
+      error: (err) => console.error("Error bij laden balans:", err),
+    })
+
+    return () => subscription.unsubscribe()
   }, [siloCtx.siloUid, categories, transactionVersion])
 
   if (!categories) return
