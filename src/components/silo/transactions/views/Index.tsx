@@ -64,11 +64,11 @@ export default function TransactionViewIndex({ siloUid }: { siloUid: string }) {
     }
   }, [transactions])
 
-  useHotkeys('ctrl+1', () => {
+  useHotkeys("ctrl+1", () => {
     router.push(`/silo/${siloUid}/transactions/create`)
   })
 
-  useHotkeys('ctrl+2', () => {
+  useHotkeys("ctrl+2", () => {
     router.push(`/silo/${siloUid}/category/create`)
   })
 
